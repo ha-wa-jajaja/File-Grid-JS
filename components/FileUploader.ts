@@ -1,4 +1,7 @@
+import { utils } from "../utils/utils";
+
 type FileGridUploaderOptions = {
+    uploadBackBoardElement: HTMLElement | string;
     droppedFilesEvent: (
         files: FileSystemFileEntry[],
         folders: FileSystemDirectoryEntry[]
@@ -8,6 +11,7 @@ type FileGridUploaderOptions = {
 class FileGridFileUploader {
     private _el: HTMLElement;
     private _uploadHintBoardElement: HTMLElement;
+    // TODO: Content area
 
     private _disabledUpload: Boolean = false;
     private _showDropUploadBoard: Boolean = false;
@@ -86,6 +90,18 @@ class FileGridFileUploader {
 
     public constructor(
         root: HTMLElement | string,
-        {}: Partial<FileGridUploaderOptions>
-    ) {}
+        {
+            uploadBackBoardElement = ".file-grid-file-uploader-backboard",
+        }: Partial<FileGridUploaderOptions>
+    ) {
+        try {
+            const { getElement } = utils();
+            this._el = getElement(root);
+            this._uploadHintBoardElement = getElement(uploadBackBoardElement);
+        } catch (error) {
+            console.error("Error when setup FileUploader: ", error);
+        }
+    }
 }
+
+export default FileGridFileUploader;
