@@ -3,3 +3,17 @@
     height: 100%;
     position: relative;
 }
+
+.file-grid-content-hide {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.file-grid-file-uploader-backboard {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-color: red;
+    top: 0;
+    left: 0;
+}
