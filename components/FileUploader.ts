@@ -13,7 +13,6 @@ class FileGridFileUploader {
     private _el: HTMLElement;
     private _uploadHintBoardElement: HTMLElement;
     private _fileGridUploaderContentElement: HTMLElement;
-    // TODO: Content area
 
     private _disabledUpload = false;
     private _showDropUploadBoard = false;
