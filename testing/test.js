@@ -1,3 +1,3 @@
-import FileGridFileUploader from "../components/FileUploader";
+import FileGridFileUploader from "../dist/components/FileUploader.js";
 
 const fileUploader = new FileGridFileUploader("#uploader");

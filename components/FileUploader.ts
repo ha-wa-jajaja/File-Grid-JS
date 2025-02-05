@@ -15,15 +15,15 @@ class FileGridFileUploader {
     private _fileGridUploaderContentElement: HTMLElement;
     // TODO: Content area
 
-    private _disabledUpload: Boolean = false;
-    private _showDropUploadBoard: Boolean = false;
-    private _isInternalDragging: Boolean = false;
-    private _canCloseBackboard: Boolean = false;
+    private _disabledUpload = false;
+    private _showDropUploadBoard = false;
+    private _isInternalDragging = false;
+    private _canCloseBackboard = false;
 
     private _onDroppedFiles: FileGridUploaderOptions["droppedFilesEvent"] =
         () => {};
 
-    public set disabledUpload(value: Boolean) {
+    public set disabledUpload(value: boolean) {
         this._disabledUpload = value;
     }
 
@@ -33,7 +33,7 @@ class FileGridFileUploader {
         this._onDroppedFiles = func;
     }
 
-    private set showDropUploadBoard(value: Boolean) {
+    private set showDropUploadBoard(value: boolean) {
         this._showDropUploadBoard = value;
         this._uploadHintBoardElement.style.display = value ? "block" : "none";
         this._fileGridUploaderContentElement.classList.toggle(
@@ -98,12 +98,14 @@ class FileGridFileUploader {
         {
             uploadBackBoardElement = ".file-grid-file-uploader-backboard",
             contentAreaElement = ".file-grid-file-uploader-content",
-        }: Partial<FileGridUploaderOptions>
+        }: Partial<FileGridUploaderOptions> = {}
     ) {
         try {
             const { getElement } = utils();
             this._el = getElement(root);
+            this._el.classList.add("file-grid-file-uploader");
             this._uploadHintBoardElement = getElement(uploadBackBoardElement);
+            this._uploadHintBoardElement.style.display = "none";
             this._fileGridUploaderContentElement =
                 getElement(contentAreaElement);
 
