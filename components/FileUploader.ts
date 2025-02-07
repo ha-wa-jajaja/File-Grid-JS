@@ -1,4 +1,4 @@
-import { utils } from "../utils/utils";
+import { utils } from "../utils";
 import { uploaderUtils } from "../utils/uploader";
 import type { UploaderUtils } from "../utils/uploader";
 
