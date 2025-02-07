@@ -1,0 +1,147 @@
+import { utils } from "../utils/utils";
+import { uploaderUtils } from "../utils/uploader";
+import type { UploaderUtils } from "../utils/uploader";
+
+type FileGridUploaderOptions = {
+    uploadBackBoardElement: HTMLElement | string;
+    contentAreaElement: HTMLElement | string;
+    droppedFilesEvent: (
+        files: FileSystemFileEntry[],
+        folders: FileSystemDirectoryEntry[]
+    ) => void;
+};
+
+class FileGridFileUploader {
+    // PROPERTIES: Elements
+    private _el: HTMLElement;
+    private _uploadHintBoardElement: HTMLElement;
+    private _fileGridUploaderContentElement: HTMLElement;
+
+    // PROPERTIES: State
+    private _disabledUpload = false;
+    private _showDropUploadBoard = false;
+    private _isInternalDragging = false;
+
+    // PROPERTIES: Events
+    private _onDroppedFiles: (
+        files: FileSystemFileEntry[],
+        folders: FileSystemDirectoryEntry[]
+    ) => void | Promise<void> = async () => {};
+
+    // Util functions
+    private _dragOverHandler: UploaderUtils["dragOverAction"];
+    private _droppedFilesHandler: UploaderUtils["extractDroppedFiles"];
+
+    // Getters/Setters
+    public set isInternalDragging(value: boolean) {
+        this._isInternalDragging = value;
+    }
+
+    public set disabledUpload(value: boolean) {
+        this._disabledUpload = value;
+    }
+
+    public set onDroppedFiles(
+        func: FileGridUploaderOptions["droppedFilesEvent"]
+    ) {
+        this._onDroppedFiles = func;
+    }
+
+    private set showDropUploadBoard(value: boolean) {
+        this._showDropUploadBoard = value;
+        this._uploadHintBoardElement.style.display = value ? "block" : "none";
+        this._fileGridUploaderContentElement.classList.toggle(
+            "file-grid-content-hide"
+        );
+    }
+
+    // Handlers
+    private _overAction(event: Event, isDragging: boolean) {
+        const newState = this._dragOverHandler({
+            event,
+            isDragging,
+            isInternalDragging: this._isInternalDragging,
+            isUploadDisabled: this._disabledUpload,
+        });
+
+        this.showDropUploadBoard = newState.showDropUploadBoard;
+    }
+
+    private _emitFiles(event: DragEvent) {
+        const { files, folders } = this._droppedFilesHandler(
+            event,
+            this._disabledUpload
+        );
+
+        this.showDropUploadBoard = false;
+
+        const result = this._onDroppedFiles(files, folders);
+        if (result instanceof Promise) {
+            result.catch((error) =>
+                console.error("Error in droppedFilesEvent:", error)
+            );
+        }
+    }
+
+    private setFileUploaderEventListeners(root: HTMLElement) {
+        root.addEventListener("dragover", (event) => event.preventDefault());
+        root.addEventListener("dragenter", (event) =>
+            this._overAction(event, true)
+        );
+        root.addEventListener("dragleave", (event) =>
+            this._overAction(event, false)
+        );
+        root.addEventListener("drop", (event) => this._emitFiles(event));
+    }
+
+    public constructor(
+        root: HTMLElement | string,
+        {
+            uploadBackBoardElement = ".file-grid-file-uploader-backboard",
+            contentAreaElement = ".file-grid-file-uploader-content",
+            droppedFilesEvent = () => {},
+        }: Partial<FileGridUploaderOptions> = {}
+    ) {
+        try {
+            const { getElement } = utils();
+
+            // Assign the root element and add the class
+            this._el = getElement(root);
+            this._el.classList.add("file-grid-file-uploader");
+
+            // Assign the upload hint board element and hide it
+            this._uploadHintBoardElement = getElement(uploadBackBoardElement);
+            this._uploadHintBoardElement.style.display = "none";
+
+            // Assign the content area element
+            this._fileGridUploaderContentElement =
+                getElement(contentAreaElement);
+
+            // Assign the files receiving functions
+            this.onDroppedFiles = droppedFilesEvent;
+
+            this.setFileUploaderEventListeners(this._el);
+
+            const { dragOverAction, extractDroppedFiles } = uploaderUtils();
+            this._dragOverHandler = dragOverAction;
+            this._droppedFilesHandler = extractDroppedFiles;
+        } catch (error) {
+            console.error("Error when setup FileUploader: ", error);
+        }
+    }
+
+    public destroy() {
+        this._el.addEventListener("dragover", (event) =>
+            event.preventDefault()
+        );
+        this._el.addEventListener("dragenter", (event) =>
+            this._overAction(event, true)
+        );
+        this._el.addEventListener("dragleave", (event) =>
+            this._overAction(event, false)
+        );
+        this._el.addEventListener("drop", (event) => this._emitFiles(event));
+    }
+}
+
+export default FileGridFileUploader;
