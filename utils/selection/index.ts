@@ -1,53 +1,62 @@
-import type { SelectedIdsModel } from "@/types/types";
-import type { Ref } from "vue";
+// import type { SelectedIdsModel } from "@/types/types";
+// import type { Ref } from "vue";
+import { SelectedModelActions } from "../../types";
 
-export const useVFgSelection = (
-    selectedIdModel: SelectedIdsModel,
-    allIds: Ref<Array<string | number>>
-) => {
-    function updateSelectedIdModel(
-        action: "clear" | "select" | "delete" | "append" | "add-multi",
-        id?: string
-    ) {
-        if (!selectedIdModel.value)
-            throw new Error("SelectedIdsModel is not invalid");
+type FgSelectionArgsBase = {
+    targetId?: string;
+    allIds: string[];
+    selectedIds: Set<string>;
+};
+
+export const useFgSelection = () => {
+    function getUpdatedIdModel({
+        action,
+        targetId,
+        allIds,
+        selectedIds,
+    }: FgSelectionArgsBase & { action: SelectedModelActions }) {
+        const res = new Set(selectedIds);
 
         if (action === "clear") {
-            selectedIdModel.value.clear();
-            return;
+            return new Set();
         }
 
-        if (!id) throw new Error("Missing ID for action " + action);
+        if (!targetId) throw new Error("Missing ID for action " + action);
 
-        if (action === "append") {
-            selectedIdModel.value.add(id);
-            return;
+        switch (action) {
+            case "select":
+                return new Set([targetId]);
+
+            case "add-multi":
+                handleMultiSelection({
+                    targetId,
+                    allIds,
+                    selectedIds: res,
+                });
+
+            case "append":
+                res.add(targetId);
+                break;
+
+            case "delete":
+                res.delete(targetId);
+                break;
         }
 
-        if (action === "add-multi") {
-            handleMultiSelection(selectedIdModel.value, id);
-        }
-
-        if (action === "select") {
-            selectedIdModel.value.clear();
-            selectedIdModel.value.add(id);
-        }
-
-        if (action === "delete") {
-            if (selectedIdModel.value.has(id)) selectedIdModel.value.delete(id);
-        }
+        return res;
     }
 
-    function handleMultiSelection(
-        selectedIds: Set<string | number>,
-        targetId: string | number
-    ) {
+    function handleMultiSelection({
+        targetId,
+        allIds,
+        selectedIds,
+    }: FgSelectionArgsBase) {
         const selectedItemIndexes: number[] = [];
         let targetIdIdx = -1;
         let firstItemIdx = Infinity;
         let lastItemIdx = -1;
 
-        allIds.value.forEach((id, idx) => {
+        allIds.forEach((id, idx) => {
             if (selectedIds.has(id)) {
                 selectedItemIndexes.push(idx);
                 firstItemIdx = Math.min(firstItemIdx, idx);
@@ -61,18 +70,18 @@ export const useVFgSelection = (
 
         let itemsToAdd;
         if (targetIdIdx < firstItemIdx) {
-            itemsToAdd = allIds.value.slice(targetIdIdx, lastItemIdx);
+            itemsToAdd = allIds.slice(targetIdIdx, lastItemIdx);
         } else {
             const startIdx =
                 targetIdIdx < lastItemIdx ? targetIdIdx : lastItemIdx + 1;
             const endIdx =
                 targetIdIdx < lastItemIdx ? lastItemIdx : targetIdIdx + 1;
 
-            itemsToAdd = allIds.value.slice(startIdx, endIdx);
+            itemsToAdd = allIds.slice(startIdx, endIdx);
         }
 
-        itemsToAdd.forEach((i) => selectedIdModel.value?.add(i));
+        itemsToAdd.forEach((i) => selectedIds.add(i));
     }
 
-    return { updateSelectedIdModel };
+    return { getUpdatedIdModel };
 };
