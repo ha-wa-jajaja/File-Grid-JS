@@ -2,7 +2,7 @@
 // import type { Ref } from "vue";
 import { SelectedModelActions } from "../../types";
 
-type FgSelectionArgsBase = {
+export type FgSelectionArgsBase = {
     targetId?: string;
     allIds: string[];
     selectedIds: Set<string>;
@@ -14,7 +14,7 @@ export const useFgSelection = () => {
         targetId,
         allIds,
         selectedIds,
-    }: FgSelectionArgsBase & { action: SelectedModelActions }) {
+    }: FgSelectionArgsBase & { action: SelectedModelActions }): Set<string> {
         const res = new Set(selectedIds);
 
         if (action === "clear") {
