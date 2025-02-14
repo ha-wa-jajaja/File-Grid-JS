@@ -1,163 +1,114 @@
-import { ref } from "vue";
-import type { Ref } from "vue";
-import type { SelectedIdsModel } from "@/types/types";
+import { useCheckFgItemCollide } from "./checkItemCollide";
 
-export type useVFgGhostSelectorProps = {
-    selectedIds: SelectedIdsModel;
-    allIds: Ref<Array<string | number>>;
-    ghostSelectEl: Ref<HTMLElement | null>;
-    vFsItemClassName: string;
+export type GhostSelectorUtilsReturnType = {
+    active: boolean;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
 };
 
-export const useVFgGhostSelector = ({
-    selectedIds,
-    allIds,
-    ghostSelectEl,
-    vFsItemClassName,
-}: useVFgGhostSelectorProps) => {
-    const isDoingVfgGhostSelect = ref(false);
-    const displayVFgGhostSelect = ref(false);
-    const ghostSelectInitX = ref(0);
-    const ghostSelectInitY = ref(0);
-    const ghostSelectPosX = ref(0);
-    const ghostSelectPosY = ref(0);
-    const ghostSelectWidth = ref(0);
-    const ghostSelectHeight = ref(0);
+export const useFgGhostSelector = () => {
+    let doingGhostSelect = false;
+    let ghostSelectInitX = 0;
+    let ghostSelectInitY = 0;
 
-    function toggleVFgGhostSelect(enable: boolean, e: MouseEvent) {
+    function toggleFgGhostSelect(
+        enable: boolean,
+        e: MouseEvent
+    ): GhostSelectorUtilsReturnType {
+        doingGhostSelect = enable;
+
+        const res: GhostSelectorUtilsReturnType = {
+            active: enable,
+            x: 0,
+            y: 0,
+            width: 0,
+            height: 0,
+        };
+
         if (enable) {
-            isDoingVfgGhostSelect.value = true;
-
-            ghostSelectInitX.value = e.clientX;
-            ghostSelectInitY.value = e.clientY;
-            ghostSelectPosX.value = e.clientX;
-            ghostSelectPosY.value = e.clientY;
+            res.x = e.clientX;
+            res.y = e.clientY;
+            ghostSelectInitX = e.clientX;
+            ghostSelectInitY = e.clientY;
         } else {
-            if (isDoingVfgGhostSelect.value && !displayVFgGhostSelect.value)
-                isDoingVfgGhostSelect.value = false;
-            ghostSelectPosX.value = 0;
-            ghostSelectPosY.value = 0;
-            ghostSelectWidth.value = 0;
-            ghostSelectHeight.value = 0;
+            res.width = 0;
+            res.height = 0;
+            res.x = 0;
+            res.y = 0;
+            ghostSelectInitX = 0;
+            ghostSelectInitY = 0;
         }
+
+        return res;
     }
 
-    function endVfsGhostSelect() {
-        isDoingVfgGhostSelect.value = false;
-        displayVFgGhostSelect.value = false;
+    function endFgGhostSelect() {
+        doingGhostSelect = false;
     }
 
-    const { doCheckItemCollide } = useCheckVFgItemCollide();
+    function updateFgGhostSelectFrame(x: number, y: number) {
+        if (!doingGhostSelect) return;
 
-    function updateVFgGhostSelectFrame(
-        x: number,
-        y: number,
-        width: number,
-        height: number
+        const res: GhostSelectorUtilsReturnType = {
+            active: true,
+            x: 0,
+            y: 0,
+            width: 0,
+            height: 0,
+        };
+
+        const w = Math.abs(ghostSelectInitX - x);
+        const h = Math.abs(ghostSelectInitY - y);
+
+        res.width = w;
+        res.height = h;
+
+        if (x <= ghostSelectInitX && y >= ghostSelectInitY) {
+            res.x = x;
+        } else if (y <= ghostSelectInitY && x >= ghostSelectInitX) {
+            res.y = y;
+        } else if (y < ghostSelectInitY && x < ghostSelectInitX) {
+            res.x = x;
+            res.y = y;
+        }
+
+        return res;
+    }
+
+    const { doCheckItemCollide } = useCheckFgItemCollide();
+    function checkFgCollidedItems(
+        ghostSelector: HTMLElement,
+        itemClassName: string,
+        allIds: string[],
+        selectedIds: Set<string>
     ) {
-        if (!isDoingVfgGhostSelect.value) return;
+        const itemEls = document.querySelectorAll("." + itemClassName);
+        const res = new Set<string>();
 
-        displayVFgGhostSelect.value = true;
+        Array.from(itemEls).forEach((item, index) => {
+            if (!item) return;
 
-        const w = Math.abs(width - x);
-        const h = Math.abs(height - y);
+            const collided = doCheckItemCollide(ghostSelector, item);
 
-        ghostSelectWidth.value = w;
-        ghostSelectHeight.value = h;
-
-        if (x <= width && y >= height) {
-            ghostSelectPosX.value = x;
-        } else if (y <= height && x >= width) {
-            ghostSelectPosY.value = y;
-        } else if (y < height && x < width) {
-            ghostSelectPosX.value = x;
-            ghostSelectPosY.value = y;
-        }
-
-        const vFsItems = document.querySelectorAll("." + vFsItemClassName);
-
-        Array.from(vFsItems).forEach((item, index) => {
-            if (!item || !selectedIds.value) return;
-
-            const collided =
-                ghostSelectEl.value &&
-                doCheckItemCollide(ghostSelectEl.value, item);
-
-            const itemId = allIds.value[index];
+            const itemId = allIds[index];
             if (!itemId) throw new Error("Item id is not found");
 
-            const isSelected = selectedIds.value.has(itemId);
+            const isSelected = selectedIds.has(itemId);
 
             if (collided && !isSelected) {
-                selectedIds.value.add(itemId);
-            } else if (!collided && isSelected) {
-                selectedIds.value.delete(itemId);
+                res.add(itemId);
             }
         });
-    }
 
-    function useCheckVFgItemCollide() {
-        function getElOffset(el: Element) {
-            if (!el) return;
-
-            const rect = el.getBoundingClientRect();
-            return {
-                top: rect.top + document.body.scrollTop,
-                left: rect.left + document.body.scrollLeft,
-            };
-        }
-
-        function getElDim(el: Element) {
-            if (!el) return;
-
-            const style = getComputedStyle(el);
-            return {
-                height: parseInt(style.height),
-                width: parseInt(style.width),
-            };
-        }
-
-        function doCheckItemCollide(selector: HTMLElement, item: Element) {
-            const selectorTop = getElOffset(selector)?.top;
-            const selectorLeft = getElOffset(selector)?.left;
-            const itemTop = getElOffset(item)?.top;
-            const itemLeft = getElOffset(item)?.left;
-
-            const itemDim = getElDim(item);
-            const selectorDim = getElDim(selector);
-            if (
-                !itemDim ||
-                !selectorDim ||
-                !selectorTop ||
-                !selectorLeft ||
-                !itemTop ||
-                !itemLeft
-            )
-                return false;
-            return !(
-                selectorTop + selectorDim.height < itemTop ||
-                selectorTop > itemTop + itemDim.height ||
-                selectorLeft + selectorDim.width < itemLeft ||
-                selectorLeft > itemLeft + itemDim.width
-            );
-        }
-
-        return { doCheckItemCollide };
+        return res;
     }
 
     return {
-        isDoingVfgGhostSelect,
-        displayVFgGhostSelect,
-        endVfsGhostSelect,
-        vFsGhostSelectDim: {
-            ghostSelectInitX,
-            ghostSelectInitY,
-            ghostSelectPosX,
-            ghostSelectPosY,
-            ghostSelectWidth,
-            ghostSelectHeight,
-        },
-        toggleVFgGhostSelect,
-        updateVFgGhostSelectFrame,
+        toggleFgGhostSelect,
+        updateFgGhostSelectFrame,
+        checkFgCollidedItems,
+        endFgGhostSelect,
     };
 };

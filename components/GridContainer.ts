@@ -6,6 +6,8 @@ import { useFgSelection } from "../utils/selection";
 import type { SelectedModelActions } from "../types";
 
 class FileGridContainer {
+    private _el: HTMLElement;
+
     private _uploader: FileGridFileUploader | null;
     private _scrollSensor: AutoScrollSensor | null;
     private _itemEls: FileGridItem[];
@@ -18,10 +20,13 @@ class FileGridContainer {
         typeof useFgSelection
     >["getUpdatedIdModel"];
 
+    public get el() {
+        return this._el;
+    }
     public get selectedIds() {
         return this._selectedIds;
     }
-    private get allIds() {
+    public get allIds() {
         return this._allIds;
     }
 
@@ -30,6 +35,7 @@ class FileGridContainer {
     }
     private set allIds(items: string[]) {
         this._allIds = items;
+        // TODO: Update item elements
     }
 
     public updateSelectionModel(
