@@ -27,6 +27,9 @@ export const useFgGhostSelector = () => {
             height: 0,
         };
 
+        console.log("init");
+        console.log(e.clientX, e.clientY);
+
         if (enable) {
             res.x = e.clientX;
             res.y = e.clientY;
@@ -53,8 +56,8 @@ export const useFgGhostSelector = () => {
 
         const res: GhostSelectorUtilsReturnType = {
             active: true,
-            x: 0,
-            y: 0,
+            x: ghostSelectInitX,
+            y: ghostSelectInitY,
             width: 0,
             height: 0,
         };
@@ -73,6 +76,8 @@ export const useFgGhostSelector = () => {
             res.x = x;
             res.y = y;
         }
+
+        console.log("update", res);
 
         return res;
     }

@@ -51,7 +51,8 @@ class GhostSelector {
             this._container.selectedIds = selectedIds;
         };
         this._documentMouseUp = (e) => {
-            this._useFgGhostSelector.toggleFgGhostSelect(false, e);
+            const dims = this._useFgGhostSelector.toggleFgGhostSelect(false, e);
+            this._setGhostSelectorStyle(dims);
         };
         this._windowClick = (e) => {
             e.stopPropagation();
@@ -88,11 +89,14 @@ class GhostSelector {
         const { getElement } = utils();
 
         // Assign the root element and add the class
-        if(root === ""){
-            const board = document.createElement("div")
-            this._el = container.el.insertAdjacentElement("afterbegin",board) as HTMLElement;
+        if (root === "") {
+            const board = document.createElement("div");
+            this._el = container.el.insertAdjacentElement(
+                "afterbegin",
+                board
+            ) as HTMLElement;
             this._el.classList.add("file-grid-ghost-selector");
-        }else{
+        } else {
             this._el = getElement(root);
         }
 
