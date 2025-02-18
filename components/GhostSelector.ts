@@ -4,16 +4,25 @@ import { useFgGhostSelector } from "../utils/ghostSelector";
 
 import type { GhostSelectorUtilsReturnType } from "../utils/ghostSelector";
 
+type GhostSelectorOptions = {
+    container: FileGridContainer;
+    itemClass: string;
+};
+
 class GhostSelector {
     private _el: HTMLElement;
 
     private _container: FileGridContainer;
-
     private _itemClass: string;
 
     private _active: boolean;
 
     private _useFgGhostSelector: ReturnType<typeof useFgGhostSelector>;
+
+    private _containerMouseDown: (e: MouseEvent) => void;
+    private _documentMouseMove: (e: MouseEvent) => void;
+    private _documentMouseUp: (e: MouseEvent) => void;
+    private _windowClick: (e: MouseEvent) => void;
 
     private _setGhostSelectorStyle(dims: GhostSelectorUtilsReturnType) {
         this._el.style.top = `${dims.y}px`;
@@ -22,13 +31,11 @@ class GhostSelector {
         this._el.style.height = `${dims.height}px`;
     }
 
-    // TODO: Unloading actions
     private _assignGhostSelectorEvents() {
-        this._container.el.addEventListener("mousedown", (e) => {
+        this._containerMouseDown = (e) => {
             this._useFgGhostSelector.toggleFgGhostSelect(true, e);
-        });
-
-        document.addEventListener("mousemove", (e) => {
+        };
+        this._documentMouseMove = (e) => {
             const dims = this._useFgGhostSelector.updateFgGhostSelectFrame(
                 e.clientX,
                 e.clientY
@@ -42,13 +49,11 @@ class GhostSelector {
                 this._container.selectedIds
             );
             this._container.selectedIds = selectedIds;
-        });
-
-        document.addEventListener("mouseup", (e) => {
+        };
+        this._documentMouseUp = (e) => {
             this._useFgGhostSelector.toggleFgGhostSelect(false, e);
-        });
-
-        window.addEventListener("click", (e) => {
+        };
+        this._windowClick = (e) => {
             e.stopPropagation();
 
             if (this._active) {
@@ -65,17 +70,42 @@ class GhostSelector {
             if (!typedEvent.target.classList.contains(this._itemClass)) {
                 this._container.updateSelectionModel("clear");
             }
-        });
+        };
+
+        this._container.el.addEventListener(
+            "mousedown",
+            this._containerMouseDown
+        );
+        document.addEventListener("mousemove", this._documentMouseMove);
+        document.addEventListener("mouseup", this._documentMouseUp);
+        window.addEventListener("click", this._windowClick);
     }
 
-    constructor(root: HTMLElement | string) {
+    constructor(
+        root: HTMLElement | string,
+        { container, itemClass }: GhostSelectorOptions
+    ) {
         const { getElement } = utils();
 
         // Assign the root element and add the class
         this._el = getElement(root);
         this._el.classList.add("file-grid-ghost-selector");
 
+        this._container = container;
+        this._itemClass = itemClass;
+
         this._useFgGhostSelector = useFgGhostSelector();
+        this._assignGhostSelectorEvents();
+    }
+
+    public destroy() {
+        this._container.el.removeEventListener(
+            "mousedown",
+            this._containerMouseDown
+        );
+        document.removeEventListener("mousemove", this._documentMouseMove);
+        document.removeEventListener("mouseup", this._documentMouseUp);
+        window.removeEventListener("click", this._windowClick);
     }
 }
 
