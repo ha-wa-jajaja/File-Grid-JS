@@ -1,3 +1,5 @@
+import { utils } from "../utils";
+
 class MultiSelectionBackboard {
     private _el: HTMLElement;
     private _counterEl: HTMLElement;
@@ -12,10 +14,11 @@ class MultiSelectionBackboard {
         this._counterEl.textContent = count.toString();
     }
 
-    constructor(el: HTMLElement) {
-        this._el = el;
+    constructor(root: HTMLElement | string) {
+        const { getElement } = utils();
+        this._el = getElement(root);
 
-        const counterEl = el.querySelector(".selected-count");
+        const counterEl = this._el.querySelector(".selected-count");
         if (counterEl) this._counterEl = counterEl as HTMLElement;
         else console.warn("No counter element found in backboard element");
 

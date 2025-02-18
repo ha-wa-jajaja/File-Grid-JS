@@ -43,8 +43,12 @@ class FileGridItem {
             this._multiItemBoard
         );
 
+        console.log(this._uploader);
+
         if (!this._uploader) return;
         this._uploader.isInternalDragging = dragging;
+        console.log("should set internal dragging");
+        console.log(this._uploader.isInternalDragging);
     }
 
     private onDragEnd() {

@@ -88,8 +88,13 @@ class GhostSelector {
         const { getElement } = utils();
 
         // Assign the root element and add the class
-        this._el = getElement(root);
-        this._el.classList.add("file-grid-ghost-selector");
+        if(root === ""){
+            const board = document.createElement("div")
+            this._el = container.el.insertAdjacentElement("afterbegin",board) as HTMLElement;
+            this._el.classList.add("file-grid-ghost-selector");
+        }else{
+            this._el = getElement(root);
+        }
 
         this._container = container;
         this._itemClass = itemClass;

@@ -3,6 +3,8 @@ import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import scss from "rollup-plugin-scss";
 import dts from "rollup-plugin-dts";
+import sass from "sass";
+import { watch } from "rollup";
 
 export default [
     {
@@ -20,6 +22,11 @@ export default [
             },
         ],
         plugins: [
+        
+            scss({
+                output: "./dist/css/style.css",
+                failOnError: true,
+            }),
             resolve(),
             commonjs(),
             typescript({
@@ -27,14 +34,7 @@ export default [
                 declaration: true,
                 declarationDir: "./dist/types",
             }),
-            scss({
-                fileName: "bundle.css",
-                outputStyle: "compressed",
-                // If you want source maps for your CSS
-                sourceMap: true,
-                // If you want to process SCSS
-                processor: () => require("sass"),
-            }),
+            
         ],
         external: [], // Add any external dependencies here
     },
