@@ -26,6 +26,10 @@
         display: grid;
         grid-template-columns: repeat(6, minmax(0, 1fr));
         gap: 24px;
+
+        -webkit-user-select: none; /* Safari */
+        -ms-user-select: none; /* IE 10 and IE 11 */
+        user-select: none; /* Standard syntax */
     }
 
     &-ghost-selector {

@@ -2,7 +2,7 @@ import { FileGridFileUploader, FileGridContainer } from "../dist/index.mjs";
 
 const allIds = Array.from({ length: 100 }, (_, i) => i + 1);
 
-const fileUploader = new FileGridFileUploader("#uploader");
+// const fileUploader = new FileGridFileUploader("#uploader");
 
 const container = document.querySelector("#file-grid");
 allIds.forEach((id) => {
@@ -16,11 +16,13 @@ allIds.forEach((id) => {
     container.appendChild(file);
 });
 
-const fileGridContainer = new FileGridContainer("#file-grid", {
-    itemClassName: "file",
-    uploader: "#uploader",
-    multiBoard: ".multi-board",
-    allIds,
-});
+document.addEventListener("DOMContentLoaded", () => {
+    const fileGridContainer = new FileGridContainer("#file-grid", {
+        itemClassName: "file",
+        uploader: "#uploader",
+        multiBoard: ".multi-board",
+        allIds,
+    });
 
-console.log(fileGridContainer);
+    console.log(fileGridContainer);
+});

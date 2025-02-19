@@ -15,6 +15,7 @@ type FileGridContainerOptions = {
     multiBoard: HTMLElement | string;
     ghostSelector: HTMLElement | string;
     allIds: string[];
+    itemSelectedClass: string;
 };
 
 // TODO: Cols
@@ -31,10 +32,10 @@ class FileGridContainer {
     private _ghostSelector: GhostSelector;
     private _itemEls: FileGridItem[];
 
-
     private _allIds: string[];
     private _selectedIds: Set<string>;
     private _itemClassName: string;
+    private _itemSelectedClass: string;
 
     private _getUpdatedIdModel: ReturnType<
         typeof useFgSelection
@@ -52,6 +53,13 @@ class FileGridContainer {
 
     public set selectedIds(items: Set<string>) {
         this._selectedIds = items;
+        this._allIds.forEach((id, index) => {
+            if (this.selectedIds.has(id)) {
+                this._itemEls[index].toggleSelect(true);
+            } else {
+                this._itemEls[index].toggleSelect(false);
+            }
+        });
     }
     private set allIds(ids: string[]) {
         this._allIds = ids;
@@ -59,12 +67,7 @@ class FileGridContainer {
     }
 
     private _assignGridItems(ids: string[]) {
-        console.log("Assigning grid items", ids);
-        
-        const itemEls = document.querySelectorAll("."+this._itemClassName);
-
-        console.log("ItemEls", itemEls);
-        
+        const itemEls = document.querySelectorAll("." + this._itemClassName);
 
         this._itemEls = Array.from(itemEls).map(
             (el, idx) =>
@@ -73,6 +76,7 @@ class FileGridContainer {
                     container: this,
                     uploader: this._uploader,
                     multiItemBoard: this._multiBoard,
+                    selectedClass: this._itemSelectedClass,
                 })
         );
     }
@@ -81,7 +85,9 @@ class FileGridContainer {
         action: SelectedModelActions,
         targetId?: string
     ) {
-        this._selectedIds = this._getUpdatedIdModel({
+        if (!action) return;
+
+        this.selectedIds = this._getUpdatedIdModel({
             action,
             targetId,
             allIds: this._allIds,
@@ -98,6 +104,7 @@ class FileGridContainer {
             multiBoard = ".file-grid-multi-selection-board",
             ghostSelector = "",
             allIds = [],
+            itemSelectedClass = "selected",
         }: Partial<FileGridContainerOptions> = {}
     ) {
         const { getElement } = utils();
@@ -114,12 +121,16 @@ class FileGridContainer {
                 : scrollSensor
         );
         this._multiBoard = new MultiSelectionBackboard(multiBoard);
-        this._ghostSelector = new GhostSelector(ghostSelector, {container: this, itemClass: itemClassName});
+        this._ghostSelector = new GhostSelector(ghostSelector, {
+            container: this,
+            itemClass: itemClassName,
+        });
         this.allIds = allIds;
-        this._assignGridItems(allIds);
 
         this._selectedIds = new Set<string>();
         this._getUpdatedIdModel = useFgSelection().getUpdatedIdModel;
+
+        this._itemSelectedClass = itemSelectedClass;
     }
 }
 

@@ -53,6 +53,7 @@ export const uploaderUtils = () => {
         const folders: FileSystemDirectoryEntry[] = [];
 
         Array.from(event.dataTransfer.items).forEach((item) => {
+            if (item.kind !== "file") return;
             const entry = item.webkitGetAsEntry();
             if (!entry) throw new Error("Failed to get entry");
 

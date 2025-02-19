@@ -40,7 +40,10 @@ class GhostSelector {
                 e.clientX,
                 e.clientY
             );
-            if (dims) this._setGhostSelectorStyle(dims);
+            if (dims) {
+                this._setGhostSelectorStyle(dims);
+                this._active = dims.active;
+            } else return;
 
             const selectedIds = this._useFgGhostSelector.checkFgCollidedItems(
                 this._el,
@@ -48,6 +51,7 @@ class GhostSelector {
                 this._container.allIds,
                 this._container.selectedIds
             );
+
             this._container.selectedIds = selectedIds;
         };
         this._documentMouseUp = (e) => {

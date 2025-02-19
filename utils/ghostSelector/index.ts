@@ -27,9 +27,6 @@ export const useFgGhostSelector = () => {
             height: 0,
         };
 
-        console.log("init");
-        console.log(e.clientX, e.clientY);
-
         if (enable) {
             res.x = e.clientX;
             res.y = e.clientY;
@@ -77,8 +74,6 @@ export const useFgGhostSelector = () => {
             res.y = y;
         }
 
-        console.log("update", res);
-
         return res;
     }
 
@@ -100,11 +95,14 @@ export const useFgGhostSelector = () => {
             const itemId = allIds[index];
             if (!itemId) throw new Error("Item id is not found");
 
-            const isSelected = selectedIds.has(itemId);
-
-            if (collided && !isSelected) {
+            if (collided) {
                 res.add(itemId);
             }
+
+            // const isSelected = selectedIds.has(itemId);
+
+            // if (collided && !isSelected) {
+            // }
         });
 
         return res;
