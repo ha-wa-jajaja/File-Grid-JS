@@ -7,6 +7,7 @@ import { utils } from "../utils";
  * @property {number} [scrollSpeed] - The speed of the auto-scroll, ranging from 1 to 10.
  */
 type AutoScrollConfig = {
+    enable?: boolean;
     scrollThreshold?: number;
     scrollSpeed?: number;
 };
@@ -102,6 +103,8 @@ class AutoScrollSensor {
     }
 
     public set doObserveMouseMove(state: boolean) {
+        console.log("setting doObserveMouseMove", state);
+
         this._doObserveMouseMove = state;
         if (state) {
             this._el.addEventListener("dragover", (e) =>
@@ -116,7 +119,11 @@ class AutoScrollSensor {
 
     constructor(
         el: Window | HTMLElement,
-        { scrollThreshold = 0.2, scrollSpeed = 5 }: AutoScrollConfig = {}
+        {
+            enable = true,
+            scrollThreshold = 0.2,
+            scrollSpeed = 5,
+        }: AutoScrollConfig = {}
     ) {
         this._el = el;
 
@@ -125,7 +132,11 @@ class AutoScrollSensor {
 
         this._clamp = utils().clamp;
 
+        this.doObserveMouseMove = enable;
+
         window.addEventListener("dragend", this._clearMoveDragAnim.bind(this));
+
+        console.log("AutoScrollSensor initialized");
     }
 }
 

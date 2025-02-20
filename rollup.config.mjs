@@ -4,7 +4,6 @@ import commonjs from "@rollup/plugin-commonjs";
 import scss from "rollup-plugin-scss";
 import dts from "rollup-plugin-dts";
 import sass from "sass";
-import { watch } from "rollup";
 
 export default [
     {
@@ -22,11 +21,6 @@ export default [
             },
         ],
         plugins: [
-        
-            scss({
-                output: "./dist/css/style.css",
-                failOnError: true,
-            }),
             resolve(),
             commonjs(),
             typescript({
@@ -34,7 +28,13 @@ export default [
                 declaration: true,
                 declarationDir: "./dist/types",
             }),
-            
+            scss({
+                fileName: "styles/index.css", // Explicit file name
+                failOnError: true,
+                runtime: sass,
+                watch: "styles",
+                outputStyle: "compressed",
+            }),
         ],
         external: [], // Add any external dependencies here
     },

@@ -42,8 +42,6 @@ class FileGridItem {
     };
 
     private onDragStart = (e: DragEvent) => {
-        console.log(this._multiItemBoard);
-
         const { dragging } = this._actions.onFgItemDragStart(
             e,
             this._container.selectedIds,

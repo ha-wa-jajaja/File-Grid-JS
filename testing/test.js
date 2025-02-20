@@ -24,6 +24,4 @@ document.addEventListener("DOMContentLoaded", () => {
         multiBoard: ".multi-board",
         allIds,
     });
-
-    console.log(fileGridContainer);
 });
