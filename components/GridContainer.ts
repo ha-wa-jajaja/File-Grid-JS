@@ -60,6 +60,7 @@ class FileGridContainer {
                 this._itemEls[index].toggleSelect(false);
             }
         });
+        this._multiBoard.selectedCount = items.size;
     }
     private set allIds(ids: string[]) {
         this._allIds = ids;

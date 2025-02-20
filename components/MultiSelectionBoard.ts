@@ -17,6 +17,7 @@ class MultiSelectionBackboard {
     constructor(root: HTMLElement | string) {
         const { getElement } = utils();
         this._el = getElement(root);
+        this._el.classList.add("file-grid-multi-board");
 
         const counterEl = this._el.querySelector(".selected-count");
         if (counterEl) this._counterEl = counterEl as HTMLElement;

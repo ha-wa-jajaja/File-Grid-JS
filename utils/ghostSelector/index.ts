@@ -98,11 +98,6 @@ export const useFgGhostSelector = () => {
             if (collided) {
                 res.add(itemId);
             }
-
-            // const isSelected = selectedIds.has(itemId);
-
-            // if (collided && !isSelected) {
-            // }
         });
 
         return res;

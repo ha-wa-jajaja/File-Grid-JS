@@ -8,8 +8,9 @@ const container = document.querySelector("#file-grid");
 allIds.forEach((id) => {
     const file = document.createElement("div");
     file.classList.add("file");
+    file.draggable = true;
     file.innerHTML = `
-        <div class="file__thumbnail">
+        <div class="file__thumbnail" >
             <img src="https://placehold.co/400x400?text=File+${id}" alt="File ${id}">
         </div>
     `;

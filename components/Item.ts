@@ -26,8 +26,10 @@ class FileGridItem {
 
     private _actions: FgItemActions;
 
+    private _selected: boolean;
+
     private onMouseDown = (e: MouseEvent) => {
-        const action = this._actions.onFgItemMouseDown(e, false);
+        const action = this._actions.onFgItemMouseDown(e, this._selected);
 
         if (!action) return;
         this._container.updateSelectionModel(action, this._id);
@@ -40,9 +42,11 @@ class FileGridItem {
     };
 
     private onDragStart = (e: DragEvent) => {
+        console.log(this._multiItemBoard);
+
         const { dragging } = this._actions.onFgItemDragStart(
             e,
-            new Set([this._id]),
+            this._container.selectedIds,
             this._multiItemBoard
         );
 
@@ -65,6 +69,7 @@ class FileGridItem {
     }
 
     public toggleSelect(state: boolean) {
+        this._selected = state;
         if (state) this._el.classList.add(this._selectedClass);
         else this._el.classList.remove(this._selectedClass);
     }

@@ -45,6 +45,8 @@ export const useFgItemActions = () => {
         event.stopPropagation();
         event.stopImmediatePropagation();
 
+        console.log(selectedItems.size);
+
         if (selectedItems.size > 1) {
             event.dataTransfer?.setDragImage(
                 multiSelectionBackboard.el,
