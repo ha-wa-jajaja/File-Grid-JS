@@ -33,6 +33,10 @@ class FileGridFileUploader {
     private _droppedFilesHandler: UploaderUtils["extractDroppedFiles"];
 
     // Getters/Setters
+    public get isInternalDragging() {
+        return this._isInternalDragging;
+    }
+
     public set isInternalDragging(value: boolean) {
         this._isInternalDragging = value;
     }
@@ -50,9 +54,15 @@ class FileGridFileUploader {
     private set showDropUploadBoard(value: boolean) {
         this._showDropUploadBoard = value;
         this._uploadHintBoardElement.style.display = value ? "block" : "none";
-        this._fileGridUploaderContentElement.classList.toggle(
-            "file-grid-content-hide"
-        );
+        if (value) {
+            this._fileGridUploaderContentElement.classList.add(
+                "file-grid-content-hide"
+            );
+        } else {
+            this._fileGridUploaderContentElement.classList.remove(
+                "file-grid-content-hide"
+            );
+        }
     }
 
     // Handlers
