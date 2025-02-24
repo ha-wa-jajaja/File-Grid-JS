@@ -121,7 +121,6 @@ class FileGridContainer {
                 ? getElement(scrollSensor)
                 : scrollSensor
         );
-        console.log(this._scrollSensor);
 
         this._multiBoard = new MultiSelectionBackboard(multiBoard);
         this._ghostSelector = new GhostSelector(ghostSelector, {

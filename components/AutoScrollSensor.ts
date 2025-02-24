@@ -103,8 +103,6 @@ class AutoScrollSensor {
     }
 
     public set doObserveMouseMove(state: boolean) {
-        console.log("setting doObserveMouseMove", state);
-
         this._doObserveMouseMove = state;
         if (state) {
             this._el.addEventListener("dragover", (e) =>
@@ -135,8 +133,6 @@ class AutoScrollSensor {
         this.doObserveMouseMove = enable;
 
         window.addEventListener("dragend", this._clearMoveDragAnim.bind(this));
-
-        console.log("AutoScrollSensor initialized");
     }
 }
 
