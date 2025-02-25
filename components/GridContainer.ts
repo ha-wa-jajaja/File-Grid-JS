@@ -18,8 +18,7 @@ type FileGridContainerOptions = {
     itemSelectedClass: string;
 };
 
-// TODO: Cols
-// TODO: Gap
+// TODO: Cols & Gap -> to scss or in config?
 // TODO: scrollSpeed
 // TODO: scrollThreshold
 
@@ -62,7 +61,7 @@ class FileGridContainer {
         });
         this._multiBoard.selectedCount = items.size;
     }
-    private set allIds(ids: string[]) {
+    public set allIds(ids: string[]) {
         this._allIds = ids;
         this._assignGridItems(ids);
     }
@@ -98,14 +97,18 @@ class FileGridContainer {
 
     constructor(
         root: HTMLElement | string = ".file-grid-container",
+        // TODO: Class items should be classes instead of strings? Or option can take both strings and classes?
         {
+            allIds = [],
             itemClassName = ".file-grid-item",
-            uploader = ".file-grid-file-uploader",
+            itemSelectedClass = "selected",
+            // INDEPENDENT ABILITY
+            // TODO: OPTIONAL?
             scrollSensor = window,
+            uploader = ".file-grid-file-uploader",
+            // BIND WITH CONTAINER
             multiBoard = ".file-grid-multi-selection-board",
             ghostSelector = "",
-            allIds = [],
-            itemSelectedClass = "selected",
         }: Partial<FileGridContainerOptions> = {}
     ) {
         const { getElement } = utils();
