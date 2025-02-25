@@ -1,10 +1,14 @@
 import { utils } from "../utils";
 
 class MultiSelectionBackboard {
+    // ELEMENTS
     private _el: HTMLElement;
     private _counterEl: HTMLElement;
+
+    // STATE
     private _selectedCount: number;
 
+    // GETTERS/SETTERS
     public get el() {
         return this._el;
     }
