@@ -3,6 +3,7 @@ import FileGridContainer from "./GridContainer";
 import MultiSelectionBackboard from "./MultiSelectionBoard";
 
 import type { FgItemActions } from "../utils/itemActions";
+
 import { utils } from "../utils";
 import { useFgItemActions } from "../utils/itemActions";
 
@@ -59,7 +60,7 @@ class FileGridItem {
         this._uploader.isInternalDragging = dragging;
     };
 
-    private setFileUploaderEventListeners(root: HTMLElement) {
+    private setItemEventListeners(root: HTMLElement) {
         root.addEventListener("mousedown", this.onMouseDown);
         root.addEventListener("click", this.onClick);
         root.addEventListener("dragstart", this.onDragStart);
@@ -75,24 +76,25 @@ class FileGridItem {
     constructor(
         root: HTMLElement | string,
         {
+            id,
+            selectedClass,
             uploader,
             container,
             multiItemBoard,
-            id,
-            selectedClass,
         }: FileGridItemOptions
     ) {
         const { getElement } = utils();
         this._actions = useFgItemActions();
 
         this._el = getElement(root);
-        this.setFileUploaderEventListeners(this._el);
+        this.setItemEventListeners(this._el);
+
+        this._id = id;
+        this._selectedClass = selectedClass || "selected";
 
         this._uploader = uploader;
         this._container = container;
         this._multiItemBoard = multiItemBoard;
-        this._id = id;
-        this._selectedClass = selectedClass || "selected";
     }
 
     public destroy() {
