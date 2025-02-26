@@ -9,13 +9,13 @@ import { useFgSelection } from "../utils/selection";
 import type { SelectedModelActions } from "../types";
 
 type FileGridContainerOptions = {
+    allIds: string[];
     _itemClass: string;
+    itemSelectedClass: string;
     uploader: HTMLElement | string | null;
     scrollSensor: HTMLElement | string | Window;
     multiBoard: HTMLElement | string;
     ghostSelector: HTMLElement | string;
-    allIds: string[];
-    itemSelectedClass: string;
 };
 
 // TODO: Cols & Gap -> to scss or in config?
@@ -113,9 +113,9 @@ class FileGridContainer {
     constructor(
         root: HTMLElement | string = ".file-grid-container",
         {
+            allIds = [],
             _itemClass = ".file-grid-item",
             itemSelectedClass = "selected",
-            allIds = [],
             // element options
             scrollSensor = window,
             uploader = ".file-grid-file-uploader",
