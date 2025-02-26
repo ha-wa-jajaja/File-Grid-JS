@@ -9,8 +9,8 @@ import { useFgSelection } from "../utils/selection";
 import type { SelectedModelActions } from "../types";
 
 type FileGridContainerOptions = {
-    itemClassName: string;
-    uploader: HTMLElement | string;
+    _itemClass: string;
+    uploader: HTMLElement | string | null;
     scrollSensor: HTMLElement | string | Window;
     multiBoard: HTMLElement | string;
     ghostSelector: HTMLElement | string;
@@ -25,27 +25,35 @@ type FileGridContainerOptions = {
 class FileGridContainer {
     private _el: HTMLElement;
 
-    private _uploader: FileGridFileUploader | null;
+    // OUTER ELEMENTS
+    private _uploader: FileGridFileUploader | null = null;
     private _scrollSensor: AutoScrollSensor | null;
     private _multiBoard: MultiSelectionBackboard;
+
+    // CHILDREN ELEMENTS
     private _ghostSelector: GhostSelector;
     private _itemEls: FileGridItem[];
 
+    // STATE
     private _allIds: string[];
     private _selectedIds: Set<string>;
-    private _itemClassName: string;
+    private _itemClass: string;
     private _itemSelectedClass: string;
 
+    // UTILS
     private _getUpdatedIdModel: ReturnType<
         typeof useFgSelection
     >["getUpdatedIdModel"];
 
+    // GETTERS & SETTERS
     public get el() {
         return this._el;
     }
+
     public get selectedIds() {
         return this._selectedIds;
     }
+
     public get allIds() {
         return this._allIds;
     }
@@ -61,13 +69,20 @@ class FileGridContainer {
         });
         this._multiBoard.selectedCount = items.size;
     }
+
+    /**
+     * Sets the list of ID options and refreshes the child elements by the provided _itemClass.
+     *
+     * @param ids - The new list of IDs to set.
+     */
     public set allIds(ids: string[]) {
         this._allIds = ids;
         this._assignGridItems(ids);
     }
 
+    // HANDLERS
     private _assignGridItems(ids: string[]) {
-        const itemEls = document.querySelectorAll("." + this._itemClassName);
+        const itemEls = document.querySelectorAll(this._itemClass);
 
         this._itemEls = Array.from(itemEls).map(
             (el, idx) =>
@@ -97,18 +112,15 @@ class FileGridContainer {
 
     constructor(
         root: HTMLElement | string = ".file-grid-container",
-        // TODO: Class items should be classes instead of strings? Or option can take both strings and classes?
         {
-            allIds = [],
-            itemClassName = ".file-grid-item",
+            _itemClass = ".file-grid-item",
             itemSelectedClass = "selected",
-            // INDEPENDENT ABILITY
-            // TODO: OPTIONAL?
+            allIds = [],
+            // element options
             scrollSensor = window,
             uploader = ".file-grid-file-uploader",
-            // BIND WITH CONTAINER
             multiBoard = ".file-grid-multi-selection-board",
-            ghostSelector = "",
+            ghostSelector = ".file-grid-ghost-selector",
         }: Partial<FileGridContainerOptions> = {}
     ) {
         const { getElement } = utils();
@@ -117,25 +129,28 @@ class FileGridContainer {
         this._el = getElement(root);
         this._el.classList.add("file-grid-container");
 
-        this._itemClassName = itemClassName;
-        this._uploader = new FileGridFileUploader(uploader);
+        // Assign classes
+        this._itemClass = _itemClass;
+        this._itemSelectedClass = itemSelectedClass;
+
+        // Assign ID list
+        this.allIds = allIds;
+        this._selectedIds = new Set<string>();
+
+        // Assign elements
+        uploader && (this._uploader = new FileGridFileUploader(uploader));
         this._scrollSensor = new AutoScrollSensor(
             typeof scrollSensor === "string"
                 ? getElement(scrollSensor)
                 : scrollSensor
         );
-
         this._multiBoard = new MultiSelectionBackboard(multiBoard);
         this._ghostSelector = new GhostSelector(ghostSelector, {
             container: this,
-            itemClass: itemClassName,
+            itemClass: _itemClass,
         });
-        this.allIds = allIds;
 
-        this._selectedIds = new Set<string>();
         this._getUpdatedIdModel = useFgSelection().getUpdatedIdModel;
-
-        this._itemSelectedClass = itemSelectedClass;
     }
 }
 
