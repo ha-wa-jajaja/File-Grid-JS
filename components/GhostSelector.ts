@@ -10,20 +10,26 @@ type GhostSelectorOptions = {
 };
 
 class GhostSelector {
+    // ELEMENTS
     private _el: HTMLElement;
-
     private _container: FileGridContainer;
+
+    // CONFIG
     private _itemClass: string;
 
+    // STATE
     private _active: boolean;
 
+    // UTILS
     private _useFgGhostSelector: ReturnType<typeof useFgGhostSelector>;
 
+    // EVENTS
     private _containerMouseDown: (e: MouseEvent) => void;
     private _documentMouseMove: (e: MouseEvent) => void;
     private _documentMouseUp: (e: MouseEvent) => void;
     private _windowClick: (e: MouseEvent) => void;
 
+    // HANDLERS
     private _setGhostSelectorStyle(dims: GhostSelectorUtilsReturnType) {
         this._el.style.top = `${dims.y}px`;
         this._el.style.left = `${dims.x}px`;
@@ -48,8 +54,7 @@ class GhostSelector {
             const selectedIds = this._useFgGhostSelector.checkFgCollidedItems(
                 this._el,
                 this._itemClass,
-                this._container.allIds,
-                this._container.selectedIds
+                this._container.allIds
             );
 
             this._container.selectedIds = selectedIds;

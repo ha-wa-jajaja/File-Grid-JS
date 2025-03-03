@@ -81,10 +81,9 @@ export const useFgGhostSelector = () => {
     function checkFgCollidedItems(
         ghostSelector: HTMLElement,
         itemClassName: string,
-        allIds: string[],
-        selectedIds: Set<string>
+        allIds: string[]
     ) {
-        const itemEls = document.querySelectorAll("." + itemClassName);
+        const itemEls = document.querySelectorAll(itemClassName);
         const res = new Set<string>();
 
         Array.from(itemEls).forEach((item, index) => {

@@ -12,27 +12,27 @@ type FileGridUploaderOptions = {
 };
 
 class FileGridFileUploader {
-    // PROPERTIES: Elements
+    // ELEMENTS
     private _el: HTMLElement;
     private _uploadHintBoardElement: HTMLElement;
     private _fileGridUploaderContentElement: HTMLElement;
 
-    // PROPERTIES: State
+    // STATE
     private _disabledUpload = false;
     private _showDropUploadBoard = false;
     private _isInternalDragging = false;
 
-    // PROPERTIES: Events
+    // EVENTS
     private _onDroppedFiles: (
         files: FileSystemFileEntry[],
         folders: FileSystemDirectoryEntry[]
     ) => void | Promise<void> = async () => {};
 
-    // Util functions
+    // UTILS
     private _dragOverHandler: UploaderUtils["dragOverAction"];
     private _droppedFilesHandler: UploaderUtils["extractDroppedFiles"];
 
-    // Getters/Setters
+    // GETTERS/SETTERS
     public get isInternalDragging() {
         return this._isInternalDragging;
     }
@@ -65,7 +65,7 @@ class FileGridFileUploader {
         }
     }
 
-    // Handlers
+    // HANDLERS
     private _overAction(event: Event, isDragging: boolean) {
         const newState = this._dragOverHandler({
             event,
@@ -138,19 +138,6 @@ class FileGridFileUploader {
         } catch (error) {
             console.error("Error when setup FileUploader: ", error);
         }
-    }
-
-    public destroy() {
-        this._el.addEventListener("dragover", (event) =>
-            event.preventDefault()
-        );
-        this._el.addEventListener("dragenter", (event) =>
-            this._overAction(event, true)
-        );
-        this._el.addEventListener("dragleave", (event) =>
-            this._overAction(event, false)
-        );
-        this._el.addEventListener("drop", (event) => this._emitFiles(event));
     }
 }
 

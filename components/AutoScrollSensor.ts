@@ -15,14 +15,32 @@ type AutoScrollConfig = {
 class AutoScrollSensor {
     private _el: HTMLElement | Window;
 
-    private _doObserveMouseMove = false;
-    private _moveDragAnimation: number | null = null;
-
+    // CONFIG
     private _autoScrollThreshold: number;
     private _autoScrollSpeed: number;
 
+    // STATE
+    private _doObserveMouseMove = false;
+    private _moveDragAnimation: number | null = null;
+
+    // UTILS
     private _clamp: ReturnType<typeof utils>["clamp"];
 
+    // GETTERS/SETTERS
+    public set doObserveMouseMove(state: boolean) {
+        this._doObserveMouseMove = state;
+        if (state) {
+            this._el.addEventListener("dragover", (e) =>
+                this._checkTriggerScroll(e as MouseEvent)
+            );
+        } else {
+            this._el.removeEventListener("dragover", (e) =>
+                this._checkTriggerScroll(e as MouseEvent)
+            );
+        }
+    }
+
+    // HANDLERS
     private _getScrollerHeight() {
         return this._el instanceof Window
             ? window.innerHeight
@@ -57,11 +75,11 @@ class AutoScrollSensor {
         }
     }
 
-    private _clearMoveDragAnim() {
+    private _clearMoveDragAnim = () => {
         if (!this._moveDragAnimation) return;
         cancelAnimationFrame(this._moveDragAnimation);
         this._moveDragAnimation = null;
-    }
+    };
 
     private _checkTriggerScroll(e: MouseEvent) {
         if (!this._doObserveMouseMove) return;
@@ -102,41 +120,36 @@ class AutoScrollSensor {
         this._moveDragAnimation = requestAnimationFrame(doScroll);
     }
 
-    public set doObserveMouseMove(state: boolean) {
-        console.log("setting doObserveMouseMove", state);
-
-        this._doObserveMouseMove = state;
-        if (state) {
-            this._el.addEventListener("dragover", (e) =>
-                this._checkTriggerScroll(e as MouseEvent)
-            );
-        } else {
-            this._el.removeEventListener("dragover", (e) =>
-                this._checkTriggerScroll(e as MouseEvent)
-            );
-        }
-    }
-
     constructor(
-        el: Window | HTMLElement,
+        root: Window | HTMLElement | string,
         {
             enable = true,
             scrollThreshold = 0.2,
             scrollSpeed = 5,
         }: AutoScrollConfig = {}
     ) {
-        this._el = el;
+        const { getElement, clamp } = utils();
+
+        // Assign the root element and add the class
+        if (root instanceof Window) {
+            this._el = root;
+        } else {
+            this._el = getElement(root);
+        }
 
         this._autoScrollThreshold = scrollThreshold;
         this._autoScrollSpeed = scrollSpeed;
 
-        this._clamp = utils().clamp;
+        this._clamp = clamp;
 
         this.doObserveMouseMove = enable;
 
-        window.addEventListener("dragend", this._clearMoveDragAnim.bind(this));
+        window.addEventListener("dragend", this._clearMoveDragAnim);
+    }
 
-        console.log("AutoScrollSensor initialized");
+    public destroy() {
+        this.doObserveMouseMove = false;
+        window.removeEventListener("dragend", this._clearMoveDragAnim);
     }
 }
 
