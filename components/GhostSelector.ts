@@ -77,7 +77,10 @@ class GhostSelector {
             };
 
             if (!e.target || !typedEvent.target.classList) return;
-            if (!typedEvent.target.classList.contains(this._itemClass)) {
+
+            if (
+                !typedEvent.target.classList.contains(this._itemClass.slice(1))
+            ) {
                 this._container.updateSelectionModel("clear");
             }
         };
@@ -104,7 +107,7 @@ class GhostSelector {
                 "afterbegin",
                 board
             ) as HTMLElement;
-            this._el.classList.add("file-grid-ghost-selector");
+            this._el.classList.add("file-grid__ghost-selector");
         } else {
             this._el = getElement(root);
         }

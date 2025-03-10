@@ -7,7 +7,7 @@
         <!-- <link rel="stylesheet" href="../styles/fileUploader.css" /> -->
         <link rel="stylesheet" href="../dist/styles/index.css" />
         <style>
-            .file {
+            .file-grid__item {
                 width: 100%;
                 box-sizing: border-box;
             }
@@ -16,7 +16,7 @@
                 pointer-events: none;
             }
 
-            .selected {
+            .file-grid__item--selected {
                 border: 10px solid red;
             }
 
@@ -26,26 +26,39 @@
                 pointer-events: none;
             }
 
-            .multi-board {
+            .file-grid__multi-board {
                 width: 190px;
                 height: 190px;
                 background-color: cadetblue;
             }
+
+            .logger {
+                position: fixed;
+                top: 0;
+                left: 0;
+                background-color: blueviolet;
+                color: white;
+                width: 100px;
+                height: 100px;
+            }
         </style>
     </head>
     <body>
-        <div id="uploader">
-            <div class="file-grid-file-uploader-backboard"></div>
-            <div class="file-grid-file-uploader-content">
-                <div id="scroll-sensor">
-                    <div id="file-grid" class="file-grid-container"></div>
+        <div class="file-grid">
+            <div class="file-grid__file-uploader">
+                <div class="file-grid__file-uploader-backboard"></div>
+                <div class="file-grid__file-uploader-content">
+                    <div class="file-grid__auto-scroll-sensor">
+                        <div class="file-grid__container"></div>
+                    </div>
                 </div>
+            </div>
+            <div class="file-grid__multi-board">
+                <p class="file-grid__selected-count"></p>
             </div>
         </div>
 
-        <div class="multi-board">
-            <p class="selected-count"></p>
-        </div>
+        <button class="logger">log selected</button>
 
         <script src="./test.js" type="module"></script>
     </body>

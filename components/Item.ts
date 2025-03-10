@@ -23,7 +23,7 @@ class FileGridItem {
     private _multiItemBoard: MultiSelectionBackboard;
 
     private _id: string;
-    private _selectedClass: string;
+    private _selectedClassName: string;
 
     private _actions: FgItemActions;
 
@@ -31,8 +31,8 @@ class FileGridItem {
 
     private onMouseDown = (e: MouseEvent) => {
         const action = this._actions.onFgItemMouseDown(e, this._selected);
-
         if (!action) return;
+
         this._container.updateSelectionModel(action, this._id);
     };
 
@@ -69,8 +69,8 @@ class FileGridItem {
 
     public toggleSelect(state: boolean) {
         this._selected = state;
-        if (state) this._el.classList.add(this._selectedClass);
-        else this._el.classList.remove(this._selectedClass);
+        if (state) this._el.classList.add(this._selectedClassName);
+        else this._el.classList.remove(this._selectedClassName);
     }
 
     constructor(
@@ -88,9 +88,11 @@ class FileGridItem {
 
         this._el = getElement(root);
         this.setItemEventListeners(this._el);
+        // TODO: Is this class necessary?
+        this._el.classList.add("file-grid__item");
 
         this._id = id;
-        this._selectedClass = selectedClass || "selected";
+        this._selectedClassName = selectedClass || "selected";
 
         this._uploader = uploader;
         this._container = container;

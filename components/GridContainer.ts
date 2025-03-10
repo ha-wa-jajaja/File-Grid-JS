@@ -9,13 +9,14 @@ import { useFgSelection } from "../utils/selection";
 import type { SelectedModelActions } from "../types";
 
 type FileGridContainerOptions = {
+    // TODO:SHOULD TAKE DYNAMIC TYPE?
     allIds: string[];
-    _itemClass: string;
-    itemSelectedClass: string;
-    uploader: HTMLElement | string | null;
-    scrollSensor: HTMLElement | string | Window;
+    itemClass: string;
+    itemSelectedClassName: string;
+    uploader: FileGridFileUploader | null;
+    scrollSensor: AutoScrollSensor | null;
     multiBoard: HTMLElement | string;
-    ghostSelector: HTMLElement | string;
+    ghostSelector: HTMLElement | string | null;
 };
 
 // TODO: Cols & Gap -> to scss or in config?
@@ -28,17 +29,17 @@ class FileGridContainer {
     // OUTER ELEMENTS
     private _uploader: FileGridFileUploader | null = null;
     private _scrollSensor: AutoScrollSensor | null;
-    private _multiBoard: MultiSelectionBackboard;
 
-    // CHILDREN ELEMENTS
+    // CHILDREN/SELECTION ELEMENTS
     private _ghostSelector: GhostSelector;
     private _itemEls: FileGridItem[];
+    private _multiBoard: MultiSelectionBackboard;
 
     // STATE
     private _allIds: string[];
     private _selectedIds: Set<string>;
     private _itemClass: string;
-    private _itemSelectedClass: string;
+    private _itemSelectedClassName: string;
 
     // UTILS
     private _getUpdatedIdModel: ReturnType<
@@ -91,7 +92,7 @@ class FileGridContainer {
                     container: this,
                     uploader: this._uploader,
                     multiItemBoard: this._multiBoard,
-                    selectedClass: this._itemSelectedClass,
+                    selectedClass: this._itemSelectedClassName,
                 })
         );
     }
@@ -111,44 +112,49 @@ class FileGridContainer {
     }
 
     constructor(
-        root: HTMLElement | string = ".file-grid-container",
+        root: HTMLElement | string = ".file-grid__container",
         {
             allIds = [],
-            _itemClass = ".file-grid-item",
-            itemSelectedClass = "selected",
-            // element options
-            scrollSensor = window,
-            uploader = ".file-grid-file-uploader",
-            multiBoard = ".file-grid-multi-selection-board",
-            ghostSelector = ".file-grid-ghost-selector",
+            itemClass = ".file-grid__item",
+            itemSelectedClassName = "selected",
+            scrollSensor = null,
+            uploader = null,
+            multiBoard = ".file-grid__multi-selection-board",
+            ghostSelector = null,
         }: Partial<FileGridContainerOptions> = {}
     ) {
         const { getElement } = utils();
 
         // Assign the root element and add the class
         this._el = getElement(root);
-        this._el.classList.add("file-grid-container");
+        this._el.classList.add("file-grid__container");
 
         // Assign classes
-        this._itemClass = _itemClass;
-        this._itemSelectedClass = itemSelectedClass;
+        this._itemClass = itemClass;
+        this._itemSelectedClassName = itemSelectedClassName;
 
-        // Assign ID list
+        // Assign outer elements
+        uploader && (this._uploader = uploader);
+        scrollSensor && (this._scrollSensor = scrollSensor);
+
+        // Create instances of the selection elements
+        this._multiBoard = new MultiSelectionBackboard(multiBoard);
+
+        let ghostSelectorEl = ghostSelector;
+        if (!ghostSelectorEl) {
+            ghostSelectorEl = this._el.appendChild(
+                document.createElement("div")
+            );
+            ghostSelectorEl.classList.add("file-grid__ghost-selector");
+        }
+        this._ghostSelector = new GhostSelector(ghostSelectorEl, {
+            container: this,
+            itemClass: itemClass,
+        });
+
+        // Assign ID list & create elements via setter of allIds
         this.allIds = allIds;
         this._selectedIds = new Set<string>();
-
-        // Assign elements
-        uploader && (this._uploader = new FileGridFileUploader(uploader));
-        this._scrollSensor = new AutoScrollSensor(
-            typeof scrollSensor === "string"
-                ? getElement(scrollSensor)
-                : scrollSensor
-        );
-        this._multiBoard = new MultiSelectionBackboard(multiBoard);
-        this._ghostSelector = new GhostSelector(ghostSelector, {
-            container: this,
-            itemClass: _itemClass,
-        });
 
         this._getUpdatedIdModel = useFgSelection().getUpdatedIdModel;
     }
