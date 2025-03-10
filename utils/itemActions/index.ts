@@ -53,7 +53,6 @@ export const useFgItemActions = () => {
             );
         }
 
-        // TODO: Apply internal dragging at the place that calls this function
         return { dragging: true };
     }
 
