@@ -8,9 +8,8 @@ import { utils } from "../utils";
 import { useFgSelection } from "../utils/selection";
 import type { SelectedModelActions } from "../types";
 
-type FileGridContainerOptions = {
-    // TODO:SHOULD TAKE DYNAMIC TYPE?
-    allIds: string[];
+type FileGridContainerOptions<T> = {
+    allIds: T[];
     itemClass: string;
     itemSelectedClassName: string;
     uploader: FileGridFileUploader | null;
@@ -23,7 +22,7 @@ type FileGridContainerOptions = {
 // TODO: scrollSpeed
 // TODO: scrollThreshold
 
-class FileGridContainer {
+class FileGridContainer<T> {
     private _el: HTMLElement;
 
     // OUTER ELEMENTS
@@ -31,19 +30,19 @@ class FileGridContainer {
     private _scrollSensor: AutoScrollSensor | null;
 
     // CHILDREN/SELECTION ELEMENTS
-    private _ghostSelector: GhostSelector;
-    private _itemEls: FileGridItem[];
+    private _ghostSelector: GhostSelector<T>;
+    private _itemEls: FileGridItem<T>[];
     private _multiBoard: MultiSelectionBackboard;
 
     // STATE
-    private _allIds: string[];
-    private _selectedIds: Set<string>;
+    private _allIds: T[];
+    private _selectedIds: Set<T>;
     private _itemClass: string;
     private _itemSelectedClassName: string;
 
     // UTILS
     private _getUpdatedIdModel: ReturnType<
-        typeof useFgSelection
+        typeof useFgSelection<T>
     >["getUpdatedIdModel"];
 
     // GETTERS & SETTERS
@@ -59,7 +58,7 @@ class FileGridContainer {
         return this._allIds;
     }
 
-    public set selectedIds(items: Set<string>) {
+    public set selectedIds(items: Set<T>) {
         this._selectedIds = items;
         this._allIds.forEach((id, index) => {
             if (this.selectedIds.has(id)) {
@@ -76,13 +75,13 @@ class FileGridContainer {
      *
      * @param ids - The new list of IDs to set.
      */
-    public set allIds(ids: string[]) {
+    public set allIds(ids: T[]) {
         this._allIds = ids;
         this._assignGridItems(ids);
     }
 
     // HANDLERS
-    private _assignGridItems(ids: string[]) {
+    private _assignGridItems(ids: T[]) {
         const itemEls = document.querySelectorAll(this._itemClass);
 
         this._itemEls = Array.from(itemEls).map(
@@ -97,10 +96,7 @@ class FileGridContainer {
         );
     }
 
-    public updateSelectionModel(
-        action: SelectedModelActions,
-        targetId?: string
-    ) {
+    public updateSelectionModel(action: SelectedModelActions, targetId?: T) {
         if (!action) return;
 
         this.selectedIds = this._getUpdatedIdModel({
@@ -121,7 +117,7 @@ class FileGridContainer {
             uploader = null,
             multiBoard = ".file-grid__multi-selection-board",
             ghostSelector = null,
-        }: Partial<FileGridContainerOptions> = {}
+        }: Partial<FileGridContainerOptions<T>> = {}
     ) {
         const { getElement } = utils();
 
@@ -154,9 +150,10 @@ class FileGridContainer {
 
         // Assign ID list & create elements via setter of allIds
         this.allIds = allIds;
-        this._selectedIds = new Set<string>();
+        this._selectedIds = new Set<T>();
 
-        this._getUpdatedIdModel = useFgSelection().getUpdatedIdModel;
+        const { getUpdatedIdModel } = useFgSelection<T>();
+        this._getUpdatedIdModel = getUpdatedIdModel;
     }
 }
 

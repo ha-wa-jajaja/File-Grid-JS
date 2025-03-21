@@ -4,7 +4,7 @@ import MultiSelectionBackboard from "../../components/MultiSelectionBoard";
 export type FgItemActions = ReturnType<typeof useFgItemActions>;
 
 type FgItemClickActionsReturnType = SelectedModelActions | null;
-export const useFgItemActions = () => {
+export const useFgItemActions = <T>() => {
     let isMouseDownAction = false;
 
     function onFgItemMouseDown(
@@ -39,7 +39,7 @@ export const useFgItemActions = () => {
 
     function onFgItemDragStart(
         event: DragEvent,
-        selectedItems: Set<string>,
+        selectedItems: Set<T>,
         multiSelectionBackboard: MultiSelectionBackboard
     ) {
         event.stopPropagation();

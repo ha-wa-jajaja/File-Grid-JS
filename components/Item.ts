@@ -7,22 +7,22 @@ import type { FgItemActions } from "../utils/itemActions";
 import { utils } from "../utils";
 import { useFgItemActions } from "../utils/itemActions";
 
-type FileGridItemOptions = {
+type FileGridItemOptions<T> = {
     uploader: FileGridFileUploader | null;
-    container: FileGridContainer;
+    container: FileGridContainer<T>;
     multiItemBoard: MultiSelectionBackboard;
-    id: string;
+    id: T;
     selectedClass?: string;
 };
 
-class FileGridItem {
+class FileGridItem<T> {
     private _el: HTMLElement;
 
     private _uploader: FileGridFileUploader | null;
-    private _container: FileGridContainer;
+    private _container: FileGridContainer<T>;
     private _multiItemBoard: MultiSelectionBackboard;
 
-    private _id: string;
+    private _id: T;
     private _selectedClassName: string;
 
     private _actions: FgItemActions;
@@ -81,7 +81,7 @@ class FileGridItem {
             uploader,
             container,
             multiItemBoard,
-        }: FileGridItemOptions
+        }: FileGridItemOptions<T>
     ) {
         const { getElement } = utils();
         this._actions = useFgItemActions();

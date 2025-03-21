@@ -5,8 +5,8 @@ import FileGridContainer from "./GridContainer";
 import { utils } from "../utils";
 
 // TODO: DisableUpload
-type FileGridOptions = {
-    allIds: string[];
+type FileGridOptions<T> = {
+    allIds: T[];
     uploader: string | null;
     scrollSensor: string | null;
     container: string;
@@ -15,18 +15,18 @@ type FileGridOptions = {
     ghostSelector: string | null;
 };
 
-class FileGrid {
+class FileGrid<T> {
     private _el: HTMLElement;
 
     private _uploader: FileGridFileUploader | null = null;
     private _scrollSensor: AutoScrollSensor | null = null;
-    private _container: FileGridContainer;
+    private _container: FileGridContainer<T>;
 
     public get selectedIds() {
         return this._container.selectedIds;
     }
 
-    public set allIds(ids: string[]) {
+    public set allIds(ids: T[]) {
         this._container.allIds = ids;
     }
 
@@ -44,7 +44,7 @@ class FileGrid {
             },
             multiBoard = ".file-grid__multi-board",
             ghostSelector = null,
-        }: Partial<FileGridOptions> = {}
+        }: Partial<FileGridOptions<T>> = {}
     ) {
         if (!allIds.length) console.warn("No ids are passed into FileGrid");
 
@@ -55,7 +55,7 @@ class FileGrid {
         uploader && (this._uploader = new FileGridFileUploader(uploader));
         scrollSensor &&
             (this._scrollSensor = new AutoScrollSensor(scrollSensor));
-        this._container = new FileGridContainer(container, {
+        this._container = new FileGridContainer<T>(container, {
             allIds,
             itemClass: item.el,
             itemSelectedClassName: item.selectedClassName,
