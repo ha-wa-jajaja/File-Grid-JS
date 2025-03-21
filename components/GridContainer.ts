@@ -20,6 +20,7 @@ type FileGridContainerOptions<T> = {
 
 // TODO: scrollSpeed
 // TODO: scrollThreshold
+// TODO: Can we remove the scrollSensor here?
 
 class FileGridContainer<T> {
     private _el: HTMLElement;

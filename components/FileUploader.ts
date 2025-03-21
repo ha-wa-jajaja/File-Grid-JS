@@ -11,6 +11,7 @@ type FileGridUploaderOptions = {
     ) => void;
 };
 
+// TODO: Disable upload
 class FileGridFileUploader {
     // ELEMENTS
     private _el: HTMLElement;
