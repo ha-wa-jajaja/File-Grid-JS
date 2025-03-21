@@ -4,7 +4,6 @@ import FileGridContainer from "./GridContainer";
 
 import { utils } from "../utils";
 
-// TODO: DisableUpload
 type FileGridOptions<T> = {
     allIds: T[];
     uploader: string | null;
@@ -30,7 +29,6 @@ class FileGrid<T> {
         this._container.allIds = ids;
     }
 
-    // TODO: Do we need default values in the children if it's defined here?
     public constructor(
         root: HTMLElement | string,
         {

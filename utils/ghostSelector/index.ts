@@ -83,6 +83,7 @@ export const useFgGhostSelector = () => {
         itemClassName: string,
         allIds: T[]
     ) {
+        //TODO: Instead of selecting all, can just past in the itemEls from the container?
         const itemEls = document.querySelectorAll(itemClassName);
         const res = new Set<T>();
 

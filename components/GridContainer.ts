@@ -18,7 +18,6 @@ type FileGridContainerOptions<T> = {
     ghostSelector: HTMLElement | string | null;
 };
 
-// TODO: Cols & Gap -> to scss or in config?
 // TODO: scrollSpeed
 // TODO: scrollThreshold
 

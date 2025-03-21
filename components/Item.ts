@@ -88,8 +88,6 @@ class FileGridItem<T> {
 
         this._el = getElement(root);
         this.setItemEventListeners(this._el);
-        // TODO: Is this class necessary?
-        this._el.classList.add("file-grid__item");
 
         this._id = id;
         this._selectedClassName = selectedClass || "selected";
