@@ -26,6 +26,7 @@ export const useFgSelection = <T>() => {
         switch (action) {
             case "select":
                 return new Set([targetId]);
+                break;
 
             case "add-multi":
                 handleMultiSelection({
@@ -33,6 +34,7 @@ export const useFgSelection = <T>() => {
                     allIds,
                     selectedIds: res,
                 });
+                break;
 
             case "append":
                 res.add(targetId);

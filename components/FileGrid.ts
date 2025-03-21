@@ -50,9 +50,10 @@ class FileGrid<T> {
         this._el = getElement(root);
         this._el.classList.add("file-grid");
 
-        uploader && (this._uploader = new FileGridFileUploader(uploader));
-        scrollSensor &&
-            (this._scrollSensor = new AutoScrollSensor(scrollSensor));
+        if (uploader) this._uploader = new FileGridFileUploader(uploader);
+        if (scrollSensor)
+            this._scrollSensor = new AutoScrollSensor(scrollSensor);
+
         this._container = new FileGridContainer<T>(container, {
             allIds,
             itemClass: item.el,

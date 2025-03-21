@@ -134,8 +134,8 @@ class FileGridContainer<T> {
         this._itemSelectedClassName = itemSelectedClassName;
 
         // Assign outer elements
-        uploader && (this._uploader = uploader);
-        scrollSensor && (this._scrollSensor = scrollSensor);
+        if (uploader) this._uploader = uploader;
+        if (scrollSensor) this._scrollSensor = scrollSensor;
 
         // Create instances of the selection elements
         this._multiBoard = new MultiSelectionBackboard(multiBoard);
