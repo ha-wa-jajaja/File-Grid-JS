@@ -54,7 +54,7 @@ class GhostSelector<T> {
             const selectedIds =
                 this._useFgGhostSelector.checkFgCollidedItems<T>(
                     this._el,
-                    this._itemClass,
+                    this._container.itemEls,
                     this._container.allIds
                 );
 

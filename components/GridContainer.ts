@@ -49,6 +49,10 @@ class FileGridContainer<T> {
         return this._el;
     }
 
+    public get itemEls() {
+        return this._itemEls;
+    }
+
     public get selectedIds() {
         return this._selectedIds;
     }

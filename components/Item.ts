@@ -29,6 +29,10 @@ class FileGridItem<T> {
 
     private _selected: boolean;
 
+    public get el() {
+        return this._el;
+    }
+
     private onMouseDown = (e: MouseEvent) => {
         const action = this._actions.onFgItemMouseDown(e, this._selected);
         if (!action) return;
