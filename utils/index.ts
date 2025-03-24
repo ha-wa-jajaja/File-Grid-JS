@@ -6,7 +6,6 @@ export const utils = () => {
      * @throws TypeError if invalid input type provided
      */
     function getElement(target: string | HTMLElement): HTMLElement {
-        // TODO: PARENT?
         if (typeof target === "string") {
             const el = document.querySelector(target);
             if (el) return el as HTMLElement;

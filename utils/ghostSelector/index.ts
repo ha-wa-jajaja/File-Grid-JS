@@ -1,4 +1,5 @@
 import { useCheckFgItemCollide } from "./checkItemCollide";
+import FileGridItem from "../../components/Item";
 
 export type GhostSelectorUtilsReturnType = {
     active: boolean;
@@ -78,18 +79,17 @@ export const useFgGhostSelector = () => {
     }
 
     const { doCheckItemCollide } = useCheckFgItemCollide();
-    function checkFgCollidedItems(
+    function checkFgCollidedItems<T>(
         ghostSelector: HTMLElement,
-        itemClassName: string,
-        allIds: string[]
+        items: FileGridItem<T>[],
+        allIds: T[]
     ) {
-        const itemEls = document.querySelectorAll(itemClassName);
-        const res = new Set<string>();
+        const res = new Set<T>();
 
-        Array.from(itemEls).forEach((item, index) => {
+        Array.from(items).forEach((item, index) => {
             if (!item) return;
 
-            const collided = doCheckItemCollide(ghostSelector, item);
+            const collided = doCheckItemCollide(ghostSelector, item.el);
 
             const itemId = allIds[index];
             if (!itemId) throw new Error("Item id is not found");

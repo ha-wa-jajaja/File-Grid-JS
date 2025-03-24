@@ -2,19 +2,19 @@
 // import type { Ref } from "vue";
 import { SelectedModelActions } from "../../types";
 
-export type FgSelectionArgsBase = {
-    targetId?: string;
-    allIds: string[];
-    selectedIds: Set<string>;
+export type FgSelectionArgsBase<T> = {
+    targetId?: T;
+    allIds: T[];
+    selectedIds: Set<T>;
 };
 
-export const useFgSelection = () => {
+export const useFgSelection = <T>() => {
     function getUpdatedIdModel({
         action,
         targetId,
         allIds,
         selectedIds,
-    }: FgSelectionArgsBase & { action: SelectedModelActions }): Set<string> {
+    }: FgSelectionArgsBase<T> & { action: SelectedModelActions }): Set<T> {
         const res = new Set(selectedIds);
 
         if (action === "clear") {
@@ -26,6 +26,7 @@ export const useFgSelection = () => {
         switch (action) {
             case "select":
                 return new Set([targetId]);
+                break;
 
             case "add-multi":
                 handleMultiSelection({
@@ -33,6 +34,7 @@ export const useFgSelection = () => {
                     allIds,
                     selectedIds: res,
                 });
+                break;
 
             case "append":
                 res.add(targetId);
@@ -50,7 +52,7 @@ export const useFgSelection = () => {
         targetId,
         allIds,
         selectedIds,
-    }: FgSelectionArgsBase) {
+    }: FgSelectionArgsBase<T>) {
         const selectedItemIndexes: number[] = [];
         let targetIdIdx = -1;
         let firstItemIdx = Infinity;

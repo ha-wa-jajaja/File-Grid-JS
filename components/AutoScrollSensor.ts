@@ -1,15 +1,24 @@
 import { utils } from "../utils";
 
+export type ScrollConfigElement = HTMLElement | Window | string;
+
 /**
  * Configuration options for the auto-scroll sensor.
  *
- * @property {number} [scrollThreshold] - The threshold for triggering auto-scroll, ranging from 0 to 1.
+ * @property {number} [scrollThreshold] - The threshold in the element to trigger the auto-scroll.
+ * For example, when the value is 0.3, the top 30% and bottom 30% of the element will trigger auto-scroll.
  * @property {number} [scrollSpeed] - The speed of the auto-scroll, ranging from 1 to 10.
  */
-type AutoScrollConfig = {
+export type AutoScrollConfig = {
     enable?: boolean;
     scrollThreshold?: number;
     scrollSpeed?: number;
+};
+
+export const DEFAULT_AUTO_SCROLL_CONFIG: AutoScrollConfig = {
+    enable: true,
+    scrollThreshold: 0.2,
+    scrollSpeed: 5,
 };
 
 class AutoScrollSensor {
@@ -20,15 +29,15 @@ class AutoScrollSensor {
     private _autoScrollSpeed: number;
 
     // STATE
-    private _doObserveMouseMove = false;
+    private _enable = false;
     private _moveDragAnimation: number | null = null;
 
     // UTILS
     private _clamp: ReturnType<typeof utils>["clamp"];
 
     // GETTERS/SETTERS
-    public set doObserveMouseMove(state: boolean) {
-        this._doObserveMouseMove = state;
+    public set enable(state: boolean) {
+        this._enable = state;
         if (state) {
             this._el.addEventListener("dragover", (e) =>
                 this._checkTriggerScroll(e as MouseEvent)
@@ -82,7 +91,7 @@ class AutoScrollSensor {
     };
 
     private _checkTriggerScroll(e: MouseEvent) {
-        if (!this._doObserveMouseMove) return;
+        if (!this._enable) return;
 
         const currentMouseY = this._getScrollerMouseYPosition(e);
         const scrollerHeight = this._getScrollerHeight();
@@ -121,7 +130,7 @@ class AutoScrollSensor {
     }
 
     constructor(
-        root: Window | HTMLElement | string,
+        root: ScrollConfigElement,
         {
             enable = true,
             scrollThreshold = 0.2,
@@ -142,13 +151,13 @@ class AutoScrollSensor {
 
         this._clamp = clamp;
 
-        this.doObserveMouseMove = enable;
+        this.enable = enable;
 
         window.addEventListener("dragend", this._clearMoveDragAnim);
     }
 
     public destroy() {
-        this.doObserveMouseMove = false;
+        this.enable = false;
         window.removeEventListener("dragend", this._clearMoveDragAnim);
     }
 }

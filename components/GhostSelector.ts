@@ -4,15 +4,15 @@ import { useFgGhostSelector } from "../utils/ghostSelector";
 
 import type { GhostSelectorUtilsReturnType } from "../utils/ghostSelector";
 
-type GhostSelectorOptions = {
-    container: FileGridContainer;
+type GhostSelectorOptions<T> = {
+    container: FileGridContainer<T>;
     itemClass: string;
 };
 
-class GhostSelector {
+class GhostSelector<T> {
     // ELEMENTS
     private _el: HTMLElement;
-    private _container: FileGridContainer;
+    private _container: FileGridContainer<T>;
 
     // CONFIG
     private _itemClass: string;
@@ -51,11 +51,12 @@ class GhostSelector {
                 this._active = dims.active;
             } else return;
 
-            const selectedIds = this._useFgGhostSelector.checkFgCollidedItems(
-                this._el,
-                this._itemClass,
-                this._container.allIds
-            );
+            const selectedIds =
+                this._useFgGhostSelector.checkFgCollidedItems<T>(
+                    this._el,
+                    this._container.itemEls,
+                    this._container.allIds
+                );
 
             this._container.selectedIds = selectedIds;
         };
@@ -77,7 +78,10 @@ class GhostSelector {
             };
 
             if (!e.target || !typedEvent.target.classList) return;
-            if (!typedEvent.target.classList.contains(this._itemClass)) {
+
+            if (
+                !typedEvent.target.classList.contains(this._itemClass.slice(1))
+            ) {
                 this._container.updateSelectionModel("clear");
             }
         };
@@ -93,7 +97,7 @@ class GhostSelector {
 
     constructor(
         root: HTMLElement | string,
-        { container, itemClass }: GhostSelectorOptions
+        { container, itemClass }: GhostSelectorOptions<T>
     ) {
         const { getElement } = utils();
 
@@ -104,7 +108,7 @@ class GhostSelector {
                 "afterbegin",
                 board
             ) as HTMLElement;
-            this._el.classList.add("file-grid-ghost-selector");
+            this._el.classList.add("file-grid__ghost-selector");
         } else {
             this._el = getElement(root);
         }

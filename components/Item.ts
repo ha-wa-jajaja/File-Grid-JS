@@ -7,32 +7,36 @@ import type { FgItemActions } from "../utils/itemActions";
 import { utils } from "../utils";
 import { useFgItemActions } from "../utils/itemActions";
 
-type FileGridItemOptions = {
+type FileGridItemOptions<T> = {
     uploader: FileGridFileUploader | null;
-    container: FileGridContainer;
+    container: FileGridContainer<T>;
     multiItemBoard: MultiSelectionBackboard;
-    id: string;
+    id: T;
     selectedClass?: string;
 };
 
-class FileGridItem {
+class FileGridItem<T> {
     private _el: HTMLElement;
 
     private _uploader: FileGridFileUploader | null;
-    private _container: FileGridContainer;
+    private _container: FileGridContainer<T>;
     private _multiItemBoard: MultiSelectionBackboard;
 
-    private _id: string;
-    private _selectedClass: string;
+    private _id: T;
+    private _selectedClassName: string;
 
     private _actions: FgItemActions;
 
     private _selected: boolean;
 
+    public get el() {
+        return this._el;
+    }
+
     private onMouseDown = (e: MouseEvent) => {
         const action = this._actions.onFgItemMouseDown(e, this._selected);
-
         if (!action) return;
+
         this._container.updateSelectionModel(action, this._id);
     };
 
@@ -69,8 +73,8 @@ class FileGridItem {
 
     public toggleSelect(state: boolean) {
         this._selected = state;
-        if (state) this._el.classList.add(this._selectedClass);
-        else this._el.classList.remove(this._selectedClass);
+        if (state) this._el.classList.add(this._selectedClassName);
+        else this._el.classList.remove(this._selectedClassName);
     }
 
     constructor(
@@ -81,7 +85,7 @@ class FileGridItem {
             uploader,
             container,
             multiItemBoard,
-        }: FileGridItemOptions
+        }: FileGridItemOptions<T>
     ) {
         const { getElement } = utils();
         this._actions = useFgItemActions();
@@ -90,7 +94,7 @@ class FileGridItem {
         this.setItemEventListeners(this._el);
 
         this._id = id;
-        this._selectedClass = selectedClass || "selected";
+        this._selectedClassName = selectedClass || "selected";
 
         this._uploader = uploader;
         this._container = container;

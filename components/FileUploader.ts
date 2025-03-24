@@ -11,6 +11,11 @@ type FileGridUploaderOptions = {
     ) => void;
 };
 
+export type DropFilesCallback = (
+    files: FileSystemFileEntry[],
+    folders: FileSystemDirectoryEntry[]
+) => void | Promise<void>;
+
 class FileGridFileUploader {
     // ELEMENTS
     private _el: HTMLElement;
@@ -23,16 +28,17 @@ class FileGridFileUploader {
     private _isInternalDragging = false;
 
     // EVENTS
-    private _onDroppedFiles: (
-        files: FileSystemFileEntry[],
-        folders: FileSystemDirectoryEntry[]
-    ) => void | Promise<void> = async () => {};
+    private _onDroppedFiles: DropFilesCallback = async () => {};
 
     // UTILS
     private _dragOverHandler: UploaderUtils["dragOverAction"];
     private _droppedFilesHandler: UploaderUtils["extractDroppedFiles"];
 
     // GETTERS/SETTERS
+    public get disabledUpload() {
+        return this._disabledUpload;
+    }
+
     public get isInternalDragging() {
         return this._isInternalDragging;
     }
@@ -56,17 +62,19 @@ class FileGridFileUploader {
         this._uploadHintBoardElement.style.display = value ? "block" : "none";
         if (value) {
             this._fileGridUploaderContentElement.classList.add(
-                "file-grid-content-hide"
+                "file-grid__content-hide"
             );
         } else {
             this._fileGridUploaderContentElement.classList.remove(
-                "file-grid-content-hide"
+                "file-grid__content-hide"
             );
         }
     }
 
     // HANDLERS
     private _overAction(event: Event, isDragging: boolean) {
+        if (this._disabledUpload) return;
+
         const newState = this._dragOverHandler({
             event,
             isDragging,
@@ -78,6 +86,8 @@ class FileGridFileUploader {
     }
 
     private _emitFiles(event: DragEvent) {
+        if (this._disabledUpload) return;
+
         const { files, folders } = this._droppedFilesHandler(
             event,
             this._disabledUpload
@@ -107,8 +117,8 @@ class FileGridFileUploader {
     public constructor(
         root: HTMLElement | string,
         {
-            uploadBackBoardElement = ".file-grid-file-uploader-backboard",
-            contentAreaElement = ".file-grid-file-uploader-content",
+            uploadBackBoardElement = ".file-grid__file-uploader-backboard",
+            contentAreaElement = ".file-grid__file-uploader-content",
             droppedFilesEvent = () => {},
         }: Partial<FileGridUploaderOptions> = {}
     ) {
@@ -117,7 +127,7 @@ class FileGridFileUploader {
 
             // Assign the root element and add the class
             this._el = getElement(root);
-            this._el.classList.add("file-grid-file-uploader");
+            this._el.classList.add("file-grid__file-uploader");
 
             // Assign the upload hint board element and hide it
             this._uploadHintBoardElement = getElement(uploadBackBoardElement);
