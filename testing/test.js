@@ -15,11 +15,28 @@ allIds.forEach((id) => {
     container.appendChild(file);
 });
 
+let disableUpload = false;
 document.addEventListener("DOMContentLoaded", () => {
-    const fileGrid = new FileGrid(".file-grid", { allIds });
+    const fileGrid = new FileGrid(".file-grid", {
+        allIds,
+        droppedFilesEvent: (files, folders) => {
+            console.log(files, folders);
+        },
+    });
 
     const btn = document.querySelector(".logger");
     btn.addEventListener("click", () => {
         console.log(fileGrid.selectedIds);
+    });
+
+    const btn2 = document.querySelector(".logger2");
+    btn2.addEventListener("click", () => {
+        console.log("should be toggling to", disableUpload);
+
+        disableUpload = !disableUpload;
+
+        fileGrid.disableUpload(disableUpload);
+
+        console.log(fileGrid);
     });
 });

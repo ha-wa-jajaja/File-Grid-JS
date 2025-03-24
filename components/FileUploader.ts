@@ -11,7 +11,11 @@ type FileGridUploaderOptions = {
     ) => void;
 };
 
-// TODO: Disable upload
+export type DropFilesCallback = (
+    files: FileSystemFileEntry[],
+    folders: FileSystemDirectoryEntry[]
+) => void | Promise<void>;
+
 class FileGridFileUploader {
     // ELEMENTS
     private _el: HTMLElement;
@@ -24,16 +28,17 @@ class FileGridFileUploader {
     private _isInternalDragging = false;
 
     // EVENTS
-    private _onDroppedFiles: (
-        files: FileSystemFileEntry[],
-        folders: FileSystemDirectoryEntry[]
-    ) => void | Promise<void> = async () => {};
+    private _onDroppedFiles: DropFilesCallback = async () => {};
 
     // UTILS
     private _dragOverHandler: UploaderUtils["dragOverAction"];
     private _droppedFilesHandler: UploaderUtils["extractDroppedFiles"];
 
     // GETTERS/SETTERS
+    public get disabledUpload() {
+        return this._disabledUpload;
+    }
+
     public get isInternalDragging() {
         return this._isInternalDragging;
     }
@@ -68,6 +73,8 @@ class FileGridFileUploader {
 
     // HANDLERS
     private _overAction(event: Event, isDragging: boolean) {
+        if (this._disabledUpload) return;
+
         const newState = this._dragOverHandler({
             event,
             isDragging,
@@ -79,6 +86,8 @@ class FileGridFileUploader {
     }
 
     private _emitFiles(event: DragEvent) {
+        if (this._disabledUpload) return;
+
         const { files, folders } = this._droppedFilesHandler(
             event,
             this._disabledUpload
