@@ -4,9 +4,9 @@ import FileGridItem from "./Item";
 import MultiSelectionBackboard from "./MultiSelectionBoard";
 import GhostSelector from "./GhostSelector";
 
-import { utils } from "../utils";
-import { useFgSelection } from "../utils/selection";
-import type { SelectedModelActions } from "../types";
+import { utils } from "../../utils";
+import { useFgSelection } from "../../utils/selection";
+import type { SelectedModelActions } from "../../types";
 
 type FileGridContainerOptions<T> = {
     allIds: T[];

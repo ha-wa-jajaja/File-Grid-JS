@@ -1,6 +1,6 @@
-import { utils } from "../utils";
-import { uploaderUtils } from "../utils/uploader";
-import type { UploaderUtils } from "../utils/uploader";
+import { utils } from "../../utils";
+import { uploaderUtils } from "../../utils/uploader";
+import type { UploaderUtils } from "../../utils/uploader";
 
 type FileGridUploaderOptions = {
     uploadBackBoardElement: HTMLElement | string;
