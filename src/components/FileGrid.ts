@@ -2,7 +2,7 @@ import FileGridFileUploader from "./FileUploader";
 import AutoScrollSensor from "./AutoScrollSensor";
 import FileGridContainer from "./GridContainer";
 
-import { utils } from "../utils";
+import { utils } from "../../utils";
 
 import type { AutoScrollConfig, ScrollConfigElement } from "./AutoScrollSensor";
 import type { DropFilesCallback } from "./FileUploader";

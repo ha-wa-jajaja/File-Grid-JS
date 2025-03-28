@@ -1,8 +1,8 @@
 import FileGridContainer from "./GridContainer";
-import { utils } from "../utils";
-import { useFgGhostSelector } from "../utils/ghostSelector";
+import { utils } from "../../utils";
+import { useFgGhostSelector } from "../../utils/ghostSelector";
 
-import type { GhostSelectorUtilsReturnType } from "../utils/ghostSelector";
+import type { GhostSelectorUtilsReturnType } from "../../utils/ghostSelector";
 
 type GhostSelectorOptions<T> = {
     container: FileGridContainer<T>;

@@ -1,5 +1,4 @@
 import type { SelectedModelActions } from "../../types";
-import MultiSelectionBackboard from "../../components/MultiSelectionBoard";
 
 export type FgItemActions = ReturnType<typeof useFgItemActions>;
 
@@ -40,17 +39,13 @@ export const useFgItemActions = <T>() => {
     function onFgItemDragStart(
         event: DragEvent,
         selectedItems: Set<T>,
-        multiSelectionBackboard: MultiSelectionBackboard
+        multiSelectionBackboard: HTMLElement
     ) {
         event.stopPropagation();
         event.stopImmediatePropagation();
 
         if (selectedItems.size > 1) {
-            event.dataTransfer?.setDragImage(
-                multiSelectionBackboard.el,
-                50,
-                50
-            );
+            event.dataTransfer?.setDragImage(multiSelectionBackboard, 50, 50);
         }
 
         return { dragging: true };

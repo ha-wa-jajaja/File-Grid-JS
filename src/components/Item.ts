@@ -2,10 +2,10 @@ import FileGridFileUploader from "./FileUploader";
 import FileGridContainer from "./GridContainer";
 import MultiSelectionBackboard from "./MultiSelectionBoard";
 
-import type { FgItemActions } from "../utils/itemActions";
+import type { FgItemActions } from "../../utils/itemActions";
 
-import { utils } from "../utils";
-import { useFgItemActions } from "../utils/itemActions";
+import { utils } from "../../utils";
+import { useFgItemActions } from "../../utils/itemActions";
 
 type FileGridItemOptions<T> = {
     uploader: FileGridFileUploader | null;
@@ -50,7 +50,7 @@ class FileGridItem<T> {
         const { dragging } = this._actions.onFgItemDragStart(
             e,
             this._container.selectedIds,
-            this._multiItemBoard
+            this._multiItemBoard.el
         );
 
         if (!this._uploader) return;

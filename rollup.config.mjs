@@ -7,7 +7,7 @@ import sass from "sass";
 
 export default [
     {
-        input: "index.ts",
+        input: "src/index.ts",
         output: [
             {
                 file: "dist/index.mjs",
@@ -40,7 +40,7 @@ export default [
     },
     // Generate .d.ts files
     {
-        input: "index.ts",
+        input: "src/index.ts",
         output: [{ file: "dist/index.d.ts", format: "es" }],
         plugins: [dts()],
     },
