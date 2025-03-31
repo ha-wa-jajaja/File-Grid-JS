@@ -140,7 +140,7 @@ class AutoScrollSensor {
         const { getElement, clamp } = utils();
 
         // Assign the root element and add the class
-        if (root instanceof Window) {
+        if (root === window || root instanceof Window) {
             this._el = root;
         } else {
             this._el = getElement(root);
