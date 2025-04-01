@@ -1,4 +1,5 @@
 {
+    "name": "file-grid-js",
     "type": "module",
     "scripts": {
         "build": "rollup -c",
@@ -9,13 +10,16 @@
         "@rollup/plugin-commonjs": "^28.0.2",
         "@rollup/plugin-node-resolve": "^16.0.0",
         "@rollup/plugin-typescript": "^12.1.2",
+        "@vitest/coverage-istanbul": "3.0.9",
         "eslint": "^9.22.0",
+        "jsdom": "^26.0.0",
         "rollup": "^4.34.4",
         "rollup-plugin-dts": "^6.1.1",
         "rollup-plugin-scss": "^4.0.1",
         "sass": "^1.84.0",
         "tslib": "^2.8.1",
         "typescript": "^5.8.2",
-        "typescript-eslint": "^8.27.0"
+        "typescript-eslint": "^8.27.0",
+        "vitest": "^3.0.9"
     }
 }
