@@ -40,7 +40,7 @@ jobs:
 
             - name: Run unit tests with coverage
               run: >-
-                  pnpm run coverage --silent | sed -n '/^File/,/^-------------------$/p' >
+                  npx vitest run --coverage src/tests | sed -n '/^File/,/^-------------------$/p' >
                   coverage.md
 
             - name: Post coverage summary as PR comment
