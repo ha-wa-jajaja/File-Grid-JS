@@ -1,4 +1,8 @@
 import { utils } from "../../utils";
+import {
+    checkShouldTriggerScroll,
+    calculateScrollAmount,
+} from "../../utils/autoScrollSensor";
 
 export type ScrollConfigElement = HTMLElement | Window | string;
 
@@ -31,9 +35,6 @@ class AutoScrollSensor {
     // STATE
     private _enable = false;
     private _moveDragAnimation: number | null = null;
-
-    // UTILS
-    private _clamp: ReturnType<typeof utils>["clamp"];
 
     // GETTERS/SETTERS
     public set enable(state: boolean) {
@@ -96,30 +97,25 @@ class AutoScrollSensor {
         const currentMouseY = this._getScrollerMouseYPosition(e);
         const scrollerHeight = this._getScrollerHeight();
 
-        const inScrollTopRegion =
-            this._clamp(
-                currentMouseY,
-                0,
-                scrollerHeight * this._autoScrollThreshold
-            ) === currentMouseY;
+        // Use the extracted pure function
+        const { shouldScroll, direction } = checkShouldTriggerScroll(
+            currentMouseY,
+            scrollerHeight,
+            this._autoScrollThreshold
+        );
 
-        const inScrollBottomRegion =
-            this._clamp(
-                currentMouseY,
-                scrollerHeight * (1 - this._autoScrollThreshold),
-                scrollerHeight
-            ) === currentMouseY;
-
-        if (!inScrollTopRegion && !inScrollBottomRegion) {
+        if (!shouldScroll) {
             this._clearMoveDragAnim();
             return;
         }
 
         if (this._moveDragAnimation) return;
 
-        let movePerFrame = 0;
-        if (inScrollTopRegion) movePerFrame = -this._autoScrollSpeed;
-        if (inScrollBottomRegion) movePerFrame = this._autoScrollSpeed;
+        // Calculate how much to scroll per frame
+        const movePerFrame = calculateScrollAmount(
+            direction,
+            this._autoScrollSpeed
+        );
 
         const doScroll = () => {
             this._scrollElementY(movePerFrame);
@@ -137,7 +133,7 @@ class AutoScrollSensor {
             scrollSpeed = 5,
         }: AutoScrollConfig = {}
     ) {
-        const { getElement, clamp } = utils();
+        const { getElement } = utils();
 
         // Assign the root element and add the class
         if (root === window || root instanceof Window) {
@@ -148,8 +144,6 @@ class AutoScrollSensor {
 
         this._autoScrollThreshold = scrollThreshold;
         this._autoScrollSpeed = scrollSpeed;
-
-        this._clamp = clamp;
 
         this.enable = enable;
 
